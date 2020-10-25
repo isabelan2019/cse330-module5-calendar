@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendar</title>
+</head>
+<body>
+    <form>
+        <p>Login</p>
+        <label for="username">Username: </label>
+        <input type="text" id="username" name="username">
+        <label for="password"></label>
+        <input type="password" id="password" name="password">
+        <input type="submit" name="login-btn" id="login-btn" value="Log In">
+    </form>
+    <form>
+        <p>New User? Register</p>
+        <label for="new-username">Username: </label>
+        <input type="text" id="new-username" name="new-username">
+        <label for="new-password"></label>
+        <input type="password" id="new-password" name="new-password">
+        <input type="submit" name="create-user" id="create-user" value="Create Account">
+    </form>
+    <script>
+        (function(){
+            Date.prototype.deltaDays=function(c){
+                return new Date(this.getFullYear(),this.getMonth(),this.getDate()+c)
+                };
+                Date.prototype.getSunday=function(){
+                    return this.deltaDays(-1*this.getDay())
+                    }
+                    })();
+        function Week(c){
+            this.sunday=c.getSunday();
+            this.nextWeek=function(){
+                return new Week(this.sunday.deltaDays(7))
+                };
+            this.prevWeek=function(){
+                return new Week(this.sunday.deltaDays(-7))
+                };
+            this.contains=function(b){
+                return this.sunday.valueOf()===b.getSunday().valueOf()
+                };
+            this.getDates=function(){
+                for(var b=[],a=0;7>a;a++){
+                    b.push(this.sunday.deltaDays(a));
+                }
+                return b}
+        function Month(c,b){
+            this.year=c;this.month=b;
+            this.nextMonth=function(){
+                return new Month(c+Math.floor((b+1)/12),(b+1)%12)};
+                this.prevMonth=function(){
+                    return new Month(c+Math.floor((b-1)/12),(b+11)%12)};
+                this.getDateObject=function(a){
+                    return new Date(this.year,this.month,a)};
+                this.getWeeks=function(){
+                    var a=this.getDateObject(1),b=this.nextMonth().getDateObject(0),c=[],a=new Week(a);
+                    for(c.push(a);!a.contains(b);)
+                    a=a.nextWeek(),c.push(a);
+                    return c}};
+    </script>
+</body>
+</html>
