@@ -6,70 +6,147 @@
     <title>Calendar</title>
 </head>
 <body>
-    <form>
-        <p>Login</p>
-        <label for="username">Username: </label>
-        <input type="text" id="username" name="username">
-        <label for="password"></label>
-        <input type="password" id="password" name="password">
-        <input type="submit" name="login-btn" id="login-btn" value="Log In">
-    </form>
-    <form>
-        <p>New User? Register</p>
-        <label for="new-username">Username: </label>
-        <input type="text" id="new-username" name="new-username">
-        <label for="new-password"></label>
-        <input type="password" id="new-password" name="new-password">
-        <input type="submit" name="create-user" id="create-user" value="Create Account">
-    </form>
-    <script>
-        document.getElementById("login-btn").addEventListener("click", login, false);
-        document.getElementById("create-user").addEventListener("click", createuser, false);
-        function login(){
+    <p>Login</p>
+    <label for="username">Username: </label>
+    <input type="text" id="username" name="username" placeholder="Username">
+    <label for="current-password"></label>
+    <input type="password" id="password" name="password">
+    <button name="login-btn" id="login-btn"> Log In </button> 
 
-        }
-        function createuser() {
-            
+
+    <p>New User? Register</p>
+    <label for="new-username">Username: </label>
+    <input type="text" id="new-username" name="new-username">
+    <label for="new-password"></label>
+    <input type="password" id="new-password" name="new-password">
+    <input type="submit" name="create-user" id="create-user" value="Create Account">
+
+  
+    <script>
+        
+        document.getElementById("create-user").addEventListener("click", createuserAjax, false);
+        document.getElementById("login-btn").addEventListener("click", loginAjax, false); // Bind the AJAX call to button click
+
+        function loginAjax(event) {
+            event.preventDefault();
+            const username = document.getElementById("username").value; // Get the username from the form
+            const password = document.getElementById("password").value; // Get the password from the form
+            // Make a URL-encoded string for passing POST data:
+            const data = { 'username': username, 'password': password };
+            fetch("login.php", {
+                    method: 'POST',
+                    body: JSON.stringify(data),
+                    headers: { 'content-type': 'application/json' }
+                })
+                .then(response => response.json())
+                .then(data => console.log(data.success ? "You've been logged in!" : `You were not logged in ${data.message}`))
+                .catch(err => console.error(err));
+            }
+
+        function createuserAjax(event) {
+            event.preventDefault;
+            const newUsername = document.getElementById("new-username").value; // Get the username from the form
+            const newPassword = document.getElementById("new-password").value; // Get the password from the form
+            // Make a URL-encoded string for passing POST data:
+            const data = {'new-username': newUsername, 'new-password': newPassword}
+            fetch("createuser.php", {
+                    method: 'POST',
+                    body: JSON.stringify(data),
+                    headers: { 'content-type': 'application/json' }
+                })
+                .then(response => response.json())
+                .then(data => console.log(data.success ? "Your account has been created!" : `There was an error in creating your account: ${data.message}`))
+                .catch(err => console.error(err));
+
         }
 
         (function(){
+            //returns a date object c days in the future
             Date.prototype.deltaDays=function(c){
                 return new Date(this.getFullYear(),this.getMonth(),this.getDate()+c)
                 };
-                Date.prototype.getSunday=function(){
+            //returns Sunday nearest in the past to this day
+            Date.prototype.getSunday=function(){
                     return this.deltaDays(-1*this.getDay())
-                    }
-                    })();
+                }
+            })();
+
         function Week(c){
             this.sunday=c.getSunday();
+            //returns a week object sequentially in the future
             this.nextWeek=function(){
                 return new Week(this.sunday.deltaDays(7))
                 };
+            //returns a week object sequentially in the past
             this.prevWeek=function(){
                 return new Week(this.sunday.deltaDays(-7))
                 };
+            //returns true if this week's sunday is the same as date's sunday; false otherwise
             this.contains=function(b){
                 return this.sunday.valueOf()===b.getSunday().valueOf()
                 };
+            //returns an Array containting 7 Date objects, each representing one of the seven days in this month
             this.getDates=function(){
-                for(var b=[],a=0;7>a;a++){
-                    b.push(this.sunday.deltaDays(a));
+                for(var b=[],a=0;7>a;a++)
+                b.push(this.sunday.deltaDays(a));
+                return b
                 }
-                return b}
-        }
+            }
         function Month(c,b){
-            this.year=c;this.month=b;
+            //year associated with the month
+            this.year=c;
+            //month number (january = 0)
+            this.month=b;
+            //returns a month object sequentially in the future
             this.nextMonth=function(){
-                return new Month(c+Math.floor((b+1)/12),(b+1)%12)};
-                this.prevMonth=function(){
-                    return new Month(c+Math.floor((b-1)/12),(b+11)%12)};
-                this.getDateObject=function(a){
-                    return new Date(this.year,this.month,a)};
-                this.getWeeks=function(){
-                    var a=this.getDateObject(1),b=this.nextMonth().getDateObject(0),c=[],a=new Week(a);
-                    for(c.push(a);!a.contains(b);)
-                    a=a.nextWeek(),c.push(a);
-                    return c}};
+                return new Month(c+Math.floor((b+1)/12),(b+1)%12)
+                };
+            //returns a month object sequentially in the past
+            this.prevMonth=function(){
+                return new Month(c+Math.floor((b-1)/12),(b+11)%12)
+                };
+            //returns a date object representing the date d in the month
+            this.getDateObject=function(a){
+                return new Date(this.year,this.month,a)
+                };
+            //returns an array containing all weeks spanned by the month; the weeks are represented as week objects
+            this.getWeeks=function(){
+                var a=this.getDateObject(1),b=this.nextMonth().getDateObject(0),c=[],a=new Week(a);
+                for(c.push(a);!a.contains(b);)a=a.nextWeek(),c.push(a);
+                return c
+                }
+            };
+
+        // For our purposes, we can keep the current month in a variable in the global scope
+        var currentMonth = new Month(2020, 10); // October 2020
+
+        // Change the month when the "next" button is pressed
+       // document.getElementById("next_month_btn").addEventListener("click", function(event){
+         //   currentMonth = currentMonth.nextMonth(); // Previous month would be currentMonth.prevMonth()
+           // updateCalendar(); // Whenever the month is updated, we'll need to re-render the calendar in HTML
+           // alert("The new month is "+currentMonth.month+" "+currentMonth.year);
+        //}, false);
+
+
+        // This updateCalendar() function only alerts the dates in the currently specified month.  You need to write
+        // it to modify the DOM (optionally using jQuery) to display the days and weeks in the current month.
+        function updateCalendar(){
+            var weeks = currentMonth.getWeeks();
+            
+            for(var w in weeks){
+                var days = weeks[w].getDates();
+                // days contains normal JavaScript Date objects.
+                
+                alert("Week starting on "+days[0]);
+                
+                for(var d in days){
+                    // You can see console.log() output in your JavaScript debugging tool, like Firebug,
+                    // WebWit Inspector, or Dragonfly.
+                    console.log(days[d].toISOString());
+                }
+            }
+        }
+
     </script>
 </body>
 </html>
