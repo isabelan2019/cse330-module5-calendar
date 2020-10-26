@@ -23,6 +23,15 @@
         <input type="submit" name="create-user" id="create-user" value="Create Account">
     </form>
     <script>
+        document.getElementById("login-btn").addEventListener("click", login, false);
+        document.getElementById("create-user").addEventListener("click", createuser, false);
+        function login(){
+
+        }
+        function createuser() {
+            
+        }
+
         (function(){
             Date.prototype.deltaDays=function(c){
                 return new Date(this.getFullYear(),this.getMonth(),this.getDate()+c)
@@ -47,6 +56,7 @@
                     b.push(this.sunday.deltaDays(a));
                 }
                 return b}
+        }
         function Month(c,b){
             this.year=c;this.month=b;
             this.nextMonth=function(){
