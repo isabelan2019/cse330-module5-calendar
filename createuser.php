@@ -10,7 +10,10 @@ $json_obj = json_decode($json_str, true);
 $newuser = (string) $json_obj['new-username'];
 
 if( !preg_match('/^[\w_\-]+$/', $newuser) ){
-	echo "Invalid username. You can only use alphanumeric characters, hyphens, and underscores.";
+	echo json_encode(array(
+        "invalid"=> true,
+        "message" => "Invalid characters"
+    ));
 	exit;
 }
 
@@ -44,10 +47,9 @@ $stmt->close();
 $stmt = $mysqli->prepare("insert into users (username, hashed_password) values (?,?)");
 
 if (!$stmt) {
-    printf("Query Prep Failed: %s \n", $mysqli->error);
     echo json_encode(array(
         "success" => false,
-        "message" => "Error"
+        "message" => "ERROR inserting into database"
     ));
     exit;
 }

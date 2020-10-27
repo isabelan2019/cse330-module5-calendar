@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calendar</title>
+    <link type="text/css" rel="stylesheet" href="calendar.css">
+
 </head>
 <body>
     <p>Login</p>
@@ -20,8 +22,71 @@
     <label for="new-password"></label>
     <input type="password" id="new-password" name="new-password">
     <input type="submit" name="create-user" id="create-user" value="Create Account">
-
-  
+    
+    <div id="monthyear">
+        <p id="month"></p>
+        <p id="year"></p>
+    </div>
+    <div id="buttons">
+        <button id="prev-month-btn"> Previous Month </button>
+        <button id="next-month-btn"> Next Month</button>
+    </div>
+    <table id="calendar">
+        <tr>
+            <th>Sun</th>
+            <th>Mon</th>
+            <th>Tues</th>
+            <th>Wed</th>
+            <th>Thurs</th>
+            <th>Fri</th>
+            <th>Sat</th>
+        </tr>
+        <tr class="week" id="week1">
+            <td class="day"></td>
+            <td class="day"></td>
+            <td class="day"></td>
+            <td class="day"></td>
+            <td class="day"></td>
+            <td class="day"></td>
+            <td class="day"></td>
+        </tr>
+        <tr class="week" id="week2">
+            <td class="day"></td>
+            <td class="day"></td>
+            <td class="day"></td>
+            <td class="day"></td>
+            <td class="day"></td>
+            <td class="day"></td>
+            <td class="day"></td>
+        </tr>
+        <tr class="week" id="week3">
+            <td class="day"></td>
+            <td class="day"></td>
+            <td class="day"></td>
+            <td class="day"></td>
+            <td class="day"></td>
+            <td class="day"></td>
+            <td class="day"></td>
+        </tr>
+        <tr class="week" id="week4">
+            <td class="day"></td>
+            <td class="day"></td>
+            <td class="day"></td>
+            <td class="day"></td>
+            <td class="day"></td>
+            <td class="day"></td>
+            <td class="day"></td>
+        </tr>
+        <tr class="week" id="week5">
+            <td class="day"></td>
+            <td class="day"></td>
+            <td class="day"></td>
+            <td class="day"></td>
+            <td class="day"></td>
+            <td class="day"></td>
+            <td class="day"></td>
+        </tr>
+    </table>    
     <script>
         
         document.getElementById("create-user").addEventListener("click", createuserAjax, false);
@@ -39,7 +104,16 @@
                     headers: { 'content-type': 'application/json' }
                 })
                 .then(response => response.json())
-                .then(data => console.log(data.success ? "You've been logged in!" : `You were not logged in ${data.message}`))
+                .then(data => {
+                    console.log(data.success ? "You've been logged in!" : `You were not logged in ${data.message}`);
+                    if(data.success==true){
+                        alert("You've been successfully logged in!");
+                    }
+                    else{
+                       alert("Incorrect Username or Password. Try again");
+                    }
+                })
+
                 .catch(err => console.error(err));
             }
 
@@ -55,7 +129,17 @@
                     headers: { 'content-type': 'application/json' }
                 })
                 .then(response => response.json())
-                .then(data => console.log(data.success ? "Your account has been created!" : `There was an error in creating your account: ${data.message}`))
+                .then(data => {console.log(data.success ? "Your account has been created!" : `Your account was unable to be created: ${data.message}`);
+                    if(data.invalid==true){
+                        alert("Invalid Characters. Please choose a username with alphanumeric characters only.")
+                    }
+                    else if(data.success==true){
+                        alert ("Your account has been created!");
+                    }
+                    else{
+                        alert ("Your account was unable to be created. Please try again.");
+                    }
+                })
                 .catch(err => console.error(err));
 
         }
@@ -118,31 +202,41 @@
             };
 
         // For our purposes, we can keep the current month in a variable in the global scope
-        var currentMonth = new Month(2020, 10); // October 2020
-
+        let currentMonth = new Month(2020, 9); // October 2020 (January = 0)
+        
+        //load calendar
+        document.addEventListener("DOMContentLoaded", updateCalendar, false);
         // Change the month when the "next" button is pressed
-       // document.getElementById("next_month_btn").addEventListener("click", function(event){
-         //   currentMonth = currentMonth.nextMonth(); // Previous month would be currentMonth.prevMonth()
-           // updateCalendar(); // Whenever the month is updated, we'll need to re-render the calendar in HTML
-           // alert("The new month is "+currentMonth.month+" "+currentMonth.year);
-        //}, false);
+        document.getElementById("next-month-btn").addEventListener("click", function(event){
+            currentMonth = currentMonth.nextMonth(); // Previous month would be currentMonth.prevMonth()
+            updateCalendar(); // Whenever the month is updated, we'll need to re-render the calendar in HTML
+            alert("The new month is "+currentMonth.month+" "+currentMonth.year);
+        }, false);
 
+        // Change the month when the "prev" button is pressed
+        document.getElementById("prev-month-btn").addEventListener("click", function(event){
+            currentMonth = currentMonth.prevMonth(); // Previous month would be currentMonth.prevMonth()
+            updateCalendar(); // Whenever the month is updated, we'll need to re-render the calendar in HTML
+            alert("The new month is "+currentMonth.month+" "+currentMonth.year);
+        }, false);
 
+       
         // This updateCalendar() function only alerts the dates in the currently specified month.  You need to write
         // it to modify the DOM (optionally using jQuery) to display the days and weeks in the current month.
+
         function updateCalendar(){
-            var weeks = currentMonth.getWeeks();
+            document.getElementById("month").textContent=currentMonth.month;
+
+            document.getElementById("year").textContent=currentMonth.year;
+            let weeks = currentMonth.getWeeks();
             
-            for(var w in weeks){
-                var days = weeks[w].getDates();
+            for(let w in weeks){
+                let days = weeks[w].getDates();
                 // days contains normal JavaScript Date objects.
-                
-                alert("Week starting on "+days[0]);
-                
-                for(var d in days){
-                    // You can see console.log() output in your JavaScript debugging tool, like Firebug,
-                    // WebWit Inspector, or Dragonfly.
-                    console.log(days[d].toISOString());
+               // alert("Week starting on "+days[0]);
+                for(let d in days){
+                    document.getElementsByClassName("week")[w].children[d].textContent=days[d].getDate();
+                    
                 }
             }
         }
