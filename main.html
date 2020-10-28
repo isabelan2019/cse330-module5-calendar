@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calendar</title>
     <link type="text/css" rel="stylesheet" href="calendar-display.css">
-
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 <body>
     <p>Login</p>
@@ -14,7 +14,7 @@
     <label for="current-password"></label>
     <input type="password" id="password" name="password">
     <button name="login-btn" id="login-btn"> Log In </button> 
-
+    <button name="logout-btn" id="logout-btn"> Log Out </button>
 
     <p>New User? Register</p>
     <label for="new-username">Username: </label>
@@ -42,58 +42,105 @@
             <th>Sat</th>
         </tr>
         <tr class="week" id="week1">
-            <td class="day"></td>
-            <td class="day"></td>
-            <td class="day"></td>
-            <td class="day"></td>
-            <td class="day"></td>
-            <td class="day"></td>
-            <td class="day"></td>
+            <td class="day"> <p class="day-num"></p> <div class="class-events"></div></td>
+            <td class="day"> <p class="day-num"></p> <div class="class-events"></div></td>
+            <td class="day"> <p class="day-num"></p> <div class="class-events"></div></td>
+            <td class="day"> <p class="day-num"></p> <div class="class-events"></div></td>
+            <td class="day"> <p class="day-num"></p> <div class="class-events"></div></td>
+            <td class="day"> <p class="day-num"></p> <div class="class-events"></div></td>
+            <td class="day"> <p class="day-num"></p> <div class="class-events"></div></td>
         </tr>
         <tr class="week" id="week2">
-            <td class="day"></td>
-            <td class="day"></td>
-            <td class="day"></td>
-            <td class="day"></td>
-            <td class="day"></td>
-            <td class="day"></td>
-            <td class="day"></td>
+            <td class="day"> <p class="day-num"></p> <div class="class-events"></div></td>
+            <td class="day"> <p class="day-num"></p> <div class="class-events"></div></td>
+            <td class="day"> <p class="day-num"></p> <div class="class-events"></div></td>
+            <td class="day"> <p class="day-num"></p> <div class="class-events"></div></td>
+            <td class="day"> <p class="day-num"></p> <div class="class-events"></div></td>
+            <td class="day"> <p class="day-num"></p> <div class="class-events"></div></td>
+            <td class="day"> <p class="day-num"></p> <div class="class-events"></div></td>
         </tr>
         <tr class="week" id="week3">
-            <td class="day"></td>
-            <td class="day"></td>
-            <td class="day"></td>
-            <td class="day"></td>
-            <td class="day"></td>
-            <td class="day"></td>
-            <td class="day"></td>
+            <td class="day"> <p class="day-num"></p> <div class="class-events"></div></td>
+            <td class="day"> <p class="day-num"></p> <div class="class-events"></div></td>
+            <td class="day"> <p class="day-num"></p> <div class="class-events"></div></td>
+            <td class="day"> <p class="day-num"></p> <div class="class-events"></div></td>
+            <td class="day"> <p class="day-num"></p> <div class="class-events"></div></td>
+            <td class="day"> <p class="day-num"></p> <div class="class-events"></div></td>
+            <td class="day"> <p class="day-num"></p> <div class="class-events"></div></td>
         </tr>
         <tr class="week" id="week4">
-            <td class="day"></td>
-            <td class="day"></td>
-            <td class="day"></td>
-            <td class="day"></td>
-            <td class="day"></td>
-            <td class="day"></td>
-            <td class="day"></td>
+            <td class="day"> <p class="day-num"></p> <div class="class-events"></div></td>
+            <td class="day"> <p class="day-num"></p> <div class="class-events"></div></td>
+            <td class="day"> <p class="day-num"></p> <div class="class-events"></div></td>
+            <td class="day"> <p class="day-num"></p> <div class="class-events"></div></td>
+            <td class="day"> <p class="day-num"></p> <div class="class-events"></div></td>
+            <td class="day"> <p class="day-num"></p> <div class="class-events"></div></td>
+            <td class="day"> <p class="day-num"></p> <div class="class-events"></div></td>
         </tr>
         <tr class="week" id="week5">
-            <td class="day"></td>
-            <td class="day"></td>
-            <td class="day"></td>
-            <td class="day"></td>
-            <td class="day"></td>
-            <td class="day"></td>
-            <td class="day"></td>
+            <td class="day"> <p class="day-num"></p> <div class="class-events"></div></td>
+            <td class="day"> <p class="day-num"></p> <div class="class-events"></div></td>
+            <td class="day"> <p class="day-num"></p> <div class="class-events"></div></td>
+            <td class="day"> <p class="day-num"></p> <div class="class-events"></div></td>
+            <td class="day"> <p class="day-num"></p> <div class="class-events"></div></td>
+            <td class="day"> <p class="day-num"></p> <div class="class-events"></div></td>
+            <td class="day"> <p class="day-num"></p> <div class="class-events"></div></td>
         </tr>
-    </table>    
+        <tr class="week" id="week6">
+            <td class="day"> <p class="day-num"></p> <div class="class-events"></div></td>
+            <td class="day"> <p class="day-num"></p> <div class="class-events"></div></td>
+            <td class="day"> <p class="day-num"></p> <div class="class-events"></div></td>
+            <td class="day"> <p class="day-num"></p> <div class="class-events"></div></td>
+            <td class="day"> <p class="day-num"></p> <div class="class-events"></div></td>
+            <td class="day"> <p class="day-num"></p> <div class="class-events"></div></td>
+            <td class="day"> <p class="day-num"></p> <div class="class-events"></div></td>
+        </tr>
+    </table> 
+
+    <label for="event-title">Event Title: </label>
+    <input type="text" id="event-title" name="event-title" required> 
+    <label for="event-date">Event Date: </label>
+    <input type="date" id="date" name="date" required>
+    <label for="time">Event Time: </label>
+    <input type="time" id="time" name="time" required>
+    <button id="add"> Add Event</button>  
+
     <script>
         
         document.getElementById("create-user").addEventListener("click", createuserAjax, false);
-        document.getElementById("login-btn").addEventListener("click", loginAjax, false); // Bind the AJAX call to button click
-
-        function loginAjax(event) {
+        document.getElementById("login-btn").addEventListener("click", loginAjax, false); 
+        document.getElementById("add").addEventListener("click",addEvent,false );
+        document.getElementById("add").addEventListener("click", updateCalendar, false);
+        document.getElementById("logout-btn").addEventListener("click", logoutAjax, false);
+        //add event to server
+        function addEvent(event){
             event.preventDefault();
+            const title=document.getElementById("event-title").value;
+            const time=document.getElementById("time").value;
+            const date=document.getElementById("date").value;
+            const data={'title': title, 'date':date, 'time':time};
+            fetch("addevent.php",{
+                method:'POST',
+                body:JSON.stringify(data),
+                headers: { 'content-type': 'application/json' }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if(data.loggedin==false){
+                    console.log(data.loggedin);
+                    alert("You must be logged in.");
+                    }
+                    else{
+                    console.log(data.success ? "Event added":`Event unable to be added:${data.message}`);
+                    }
+                })
+                
+                .catch(err => console.error(err));
+        }
+        
+    
+        //log in
+        function loginAjax(event) {
             const username = document.getElementById("username").value; // Get the username from the form
             const password = document.getElementById("password").value; // Get the password from the form
             // Make a URL-encoded string for passing POST data:
@@ -108,6 +155,7 @@
                     console.log(data.success ? "You've been logged in!" : `You were not logged in ${data.message}`);
                     if(data.success==true){
                         alert("You've been successfully logged in!");
+                        updateCalendar();
                     }
                     else{
                        alert("Incorrect Username or Password. Try again");
@@ -115,8 +163,25 @@
                 })
 
                 .catch(err => console.error(err));
+                
             }
-
+        //log out
+        function logoutAjax(event){
+            fetch("logout.php")
+                .then(response=>response.json())
+                .then(data=>{
+                    if (data.success==true){
+                        alert("You've been successfully logged out!");
+                        updateCalendar();
+                    }
+                    else{
+                        alert("Try logging out again.");
+                    }
+                })
+                .catch(err => console.error(err));
+                updateCalendar();
+        }
+        //create user
         function createuserAjax(event) {
             event.preventDefault;
             const newUsername = document.getElementById("new-username").value; // Get the username from the form
@@ -130,7 +195,10 @@
                 })
                 .then(response => response.json())
                 .then(data => {console.log(data.success ? "Your account has been created!" : `Your account was unable to be created: ${data.message}`);
-                    if(data.invalid==true){
+                    if(data.exists==true){
+                        alert("This username already exists. Please choose another");
+                    }
+                    else if(data.invalid==true){
                         alert("Invalid Characters. Please choose a username with alphanumeric characters only.")
                     }
                     else if(data.success==true){
@@ -143,7 +211,8 @@
                 .catch(err => console.error(err));
 
         }
-
+        
+        //calendar helper functions
         (function(){
             //returns a date object c days in the future
             Date.prototype.deltaDays=function(c){
@@ -208,39 +277,77 @@
         document.addEventListener("DOMContentLoaded", updateCalendar, false);
         // Change the month when the "next" button is pressed
         document.getElementById("next-month-btn").addEventListener("click", function(event){
-            currentMonth = currentMonth.nextMonth(); // Previous month would be currentMonth.prevMonth()
+            currentMonth = currentMonth.nextMonth();
             updateCalendar(); // Whenever the month is updated, we'll need to re-render the calendar in HTML
             alert("The new month is "+currentMonth.month+" "+currentMonth.year);
         }, false);
 
         // Change the month when the "prev" button is pressed
         document.getElementById("prev-month-btn").addEventListener("click", function(event){
-            currentMonth = currentMonth.prevMonth(); // Previous month would be currentMonth.prevMonth()
+            currentMonth = currentMonth.prevMonth();// Previous month would be currentMonth.prevMonth()
             updateCalendar(); // Whenever the month is updated, we'll need to re-render the calendar in HTML
             alert("The new month is "+currentMonth.month+" "+currentMonth.year);
         }, false);
 
        
-        // This updateCalendar() function only alerts the dates in the currently specified month.  You need to write
-        // it to modify the DOM (optionally using jQuery) to display the days and weeks in the current month.
-
+        //render calendar
         function updateCalendar(){
+            
             document.getElementById("month").textContent=currentMonth.month;
-
             document.getElementById("year").textContent=currentMonth.year;
             let weeks = currentMonth.getWeeks();
-            
+            console.log(weeks);
             for(let w in weeks){
                 let days = weeks[w].getDates();
                 // days contains normal JavaScript Date objects.
                // alert("Week starting on "+days[0]);
                 for(let d in days){
-                    document.getElementsByClassName("week")[w].children[d].textContent=days[d].getDate();
+                    document.getElementsByClassName("week")[w].children[d].children[1].innerHTML="";
+                    document.getElementsByClassName("week")[w].children[d].firstElementChild.textContent=days[d].getDate();
+                    document.getElementsByClassName("week")[w].children[d].id=days[d].toISOString().split('T')[0];
                     
+
                 }
             }
+            //get events 
+            fetch("getevents.php")
+                .then(response => response.json())
+                .then(data => {
+                    if(data.logged!=false){
+                        console.log('Success', JSON.stringify(data));
+                        parseEvents(data);
+                    }
+                })
+               // .then (response=>response.text())
+               // .then(text=>console.log(text))
+                .catch(err => console.error(err));
+            
         }
-
+        //parse out events based on database events
+        function parseEvents(response){
+                let jsonData=JSON.parse(JSON.stringify(response));
+                console.log(jsonData.length);
+                let calendar_days=document.getElementsByClassName("day");
+                for(let i=0;i<calendar_days.length;i++){
+                    let calendar_date=calendar_days[i].id;
+                    console.log(calendar_date);
+                    for(let n=0;n<jsonData.length;n++){
+                        if(calendar_date==jsonData[n].date){
+                            let eventID=jsonData[n].event_id;
+                            if(document.getElementById(eventID)==null){
+                                let event=document.createElement('div');
+                                let eventText=document.createTextNode(jsonData[n].title + " at " + jsonData[n].time);
+                                event.appendChild(eventText);
+                                event.id=eventID;
+                                document.getElementById(calendar_date).children[1].appendChild(event);
+                            }
+                            
+                        }
+                    }
+                }
+            }
+        
+        
     </script>
 </body>
 </html>

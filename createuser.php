@@ -26,7 +26,10 @@ $stmt = $mysqli->prepare("SELECT COUNT(*) from users where username=?");
 $stmt->bind_param('s', $newuser);
 
 if(!$stmt){
-    printf("Query Prep Failed: %s\n", $mysqli->error);
+    echo json_encode(array(
+        "success" => false,
+        "message" => "ERROR checking database"
+    ));
     exit;
 }
 
@@ -38,7 +41,9 @@ $stmt->fetch();
 
 //if username already exists
 if ($cnt>0) {
-    //add something here
+    echo json_encode(array(
+        "exists" => true,
+    ));
     exit;
 }
 $stmt->close();

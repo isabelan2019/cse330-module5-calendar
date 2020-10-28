@@ -1,0 +1,45 @@
+<?php
+require 'database.php';
+session_start();
+header("Content-Type: application/json"); 
+$json_str = file_get_contents('php://input');
+$json_obj = json_decode($json_str, true);
+$title=$json_obj['title'];
+$time=$json_obj['time'];
+$date=$json_obj['date'];
+
+if(!isset($_SESSION['user_id'])){
+    echo json_encode(array(
+        "loggedin"=>false
+    ));
+    exit;
+}
+else{
+    $user_id=$_SESSION['user_id'];
+   if(empty($title) || empty($time) || empty($date)){
+    echo json_encode(array(
+        "success"=>false,
+        "message"=>"empty inputs"
+    ));
+    exit;
+   }
+   else{
+
+    $stmt=$mysqli->prepare("INSERT into events(user_id, title, date, time) values(?,?,?,?)");
+    if (!$stmt) {
+        echo json_encode(array(
+            "success" => false,
+            "message" => "ERROR inserting into database"
+        ));
+        exit;
+    }
+    $stmt->bind_param('isss',$user_id,$title,$date,$time);
+    $stmt->execute();
+    echo json_encode(array(
+        "success" => true
+    ));
+    $stmt->close();
+    }
+}
+?>
+
