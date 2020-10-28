@@ -10,18 +10,18 @@
 <body>
     <p>Login</p>
     <label for="username">Username: </label>
-    <input type="text" id="username" name="username" placeholder="Username">
+    <input type="text" id="username" name="username" placeholder="Username" required>
     <label for="current-password"></label>
-    <input type="password" id="password" name="password">
+    <input type="password" id="password" name="password" required>
     <button name="login-btn" id="login-btn"> Log In </button> 
     <button name="logout-btn" id="logout-btn"> Log Out </button>
 
     <p>New User? Register</p>
     <label for="new-username">Username: </label>
-    <input type="text" id="new-username" name="new-username">
+    <input type="text" id="new-username" name="new-username" required>
     <label for="new-password"></label>
-    <input type="password" id="new-password" name="new-password">
-    <input type="submit" name="create-user" id="create-user" value="Create Account">
+    <input type="password" id="new-password" name="new-password" required>
+    <input type="button" name="create-user" id="create-user" value="Create Account">
     
     <div id="monthyear">
         <p id="month"></p>
@@ -163,6 +163,8 @@
                 })
 
                 .catch(err => console.error(err));
+                document.getElementById('username').value = "";
+                document.getElementById('password').value = ""; 
                 
             }
         //log out
@@ -209,6 +211,9 @@
                     }
                 })
                 .catch(err => console.error(err));
+                document.getElementById('new-username').value = "";
+                document.getElementById('new-password').value = ""; 
+
 
         }
         
@@ -292,8 +297,35 @@
        
         //render calendar
         function updateCalendar(){
+            let monthTitle = "";
+            if (currentMonth.month == 0) {
+                monthTitle = "January";
+            } else if (currentMonth.month == 1){
+                monthTitle = "February";
+            } else if (currentMonth.month == 2){
+                monthTitle = "March";
+            } else if (currentMonth.month == 3){
+                monthTitle = "April";
+            } else if (currentMonth.month == 4){
+                monthTitle = "May";
+            } else if (currentMonth.month == 5){
+                monthTitle = "June";
+            } else if (currentMonth.month == 6){
+                monthTitle = "July";
+            } else if (currentMonth.month == 7){
+                monthTitle = "August";
+            } else if (currentMonth.month == 8){
+                monthTitle = "September";
+            } else if (currentMonth.month == 9){
+                monthTitle = "October";
+            } else if (currentMonth.month == 10){
+                monthTitle = "November";
+            } else if (currentMonth.month == 11){
+                monthTitle = "December";
+            }
             
-            document.getElementById("month").textContent=currentMonth.month;
+            document.getElementById("month").textContent=monthTitle;
+            //currentMonth.month;
             document.getElementById("year").textContent=currentMonth.year;
             let weeks = currentMonth.getWeeks();
             console.log(weeks);
@@ -318,10 +350,10 @@
                         parseEvents(data);
                     }
                 })
-               // .then (response=>response.text())
-               // .then(text=>console.log(text))
+                //.then(response=>response.text())
+                //.then(text=>console.log(text))
                 .catch(err => console.error(err));
-            
+                
         }
         //parse out events based on database events
         function parseEvents(response){

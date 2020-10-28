@@ -1,5 +1,6 @@
 <?php
 require 'database.php';
+ini_set("session.cookie_httponly", 1);
 session_start();
 header("Content-Type: application/json"); 
 $json_str = file_get_contents('php://input');

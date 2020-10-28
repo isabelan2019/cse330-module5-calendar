@@ -1,5 +1,6 @@
 <?php
 require 'database.php';
+ini_set("session.cookie_httponly", 1);
 session_start();
 header("Content-Type: application/json"); 
 
@@ -25,9 +26,10 @@ if(!$stmt){
 
 $stmt->execute();
 $eventsArray=array();
+
 //bind results
 $stmt->bind_result($event_id, $title, $date,$time);
-while($stmt->fetch()){
+while($stmt->fetch()){   
     array_push($eventsArray, array(
         "event_id"=>array($event_id),
         "title"=>array($title),

@@ -31,6 +31,7 @@ $stmt->fetch();
 $pwd_guess = $json_obj['password'];
 
 if($cnt==1 && password_verify($pwd_guess, $pwd_hash)){
+    ini_set("session.cookie_httponly", 1);
     session_start();
     //login success
     $_SESSION['user_id'] = $user_id;
