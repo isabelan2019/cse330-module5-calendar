@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calendar</title>
-    <link type="text/css" rel="stylesheet" href="calendar-display.css">
+    <link type="text/css" rel="stylesheet" href="calendar.css">
     <!-- jquery -->
     <link rel="stylesheet" type="text/css" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -14,19 +14,21 @@
 </head>
 
 <body>
+    <div id="loginform">
     <p>Login</p>
-    <label for="username">Username: </label>
-    <input type="text" id="username" name="username" placeholder="Username" required>
-    <label for="current-password"></label>
-    <input type="password" id="password" name="password" required>
-    <button name="login-btn" id="login-btn"> Log In </button>
+        <label for="username">Username: </label>
+        <input type="text" id="username" name="username" placeholder="Username" required>
+        <label for="current-password">Password: </label>
+        <input type="password" id="password" name="password" placeholder="Password" required>
+        <button name="login-btn" id="login-btn"> Log In </button>
+    </div>
     <button name="logout-btn" id="logout-btn"> Log Out </button>
 
-    <p>New User? Register</p>
-    <label for="new-username">Username: </label>
-    <input type="text" id="new-username" name="new-username" required>
-    <label for="new-password"></label>
-    <input type="password" id="new-password" name="new-password" required>
+    <p>New User? Register Below!</p>
+    <label for="new-username">New Username: </label>
+    <input type="text" id="new-username" name="new-username" placeholder="New Username" required>
+    <label for="new-password">New Password: </label>
+    <input type="password" id="new-password" name="new-password" placeholder="New Password" required>
     <input type="button" name="create-user" id="create-user" value="Create Account">
 
     <div id="username">
@@ -262,7 +264,7 @@
         document.getElementById("login-btn").addEventListener("click", loginAjax, false);
         document.getElementById("add").addEventListener("click", addEvent, false);
         document.getElementById("logout-btn").addEventListener("click", logoutAjax, false);
-      
+        
 
         //add event to server
         function addEvent(event) {
