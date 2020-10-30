@@ -243,13 +243,15 @@
     <button id="edit"> Add Event</button>
 
     <div id="event-details">
+
         <label for="new-event-title">Event Title: </label>
         <input type="text" id="new-event-title" name="event-title" required>
         <label for="new-event-date">Event Date: </label>
         <input type="date" id="new-date" name="date" required>
         <label for="time">Event Time: </label>
         <input type="time" id="new-time" name="time" required>
-        <button id="add"> Edit Event</button>
+        <button id="edit"> Edit Event</button>
+
     </div>
 
     <script>
@@ -259,7 +261,7 @@
         document.getElementById("add").addEventListener("click", addEvent, false);
         document.getElementById("add").addEventListener("click", updateCalendar, false);
         document.getElementById("logout-btn").addEventListener("click", logoutAjax, false);
-        
+
 
         //add event to server
         function addEvent(event) {
@@ -280,12 +282,38 @@
                         alert("You must be logged in.");
                     }
                     else {
-                        console.log(data.success ? "Event added" : `Event unable to be added:${data.message}`);
+                        alert(data.success ? "Event added" : `Event unable to be added:${data.message}`);
                     }
                 })
 
                 .catch(err => console.error(err));
         }
+
+        //edit event 
+        function editEvent(event){
+            event.preventDefault();
+            const eventid = event.target.id;
+            const ntitle = document.getElementById("new-event-title").value;
+            const ntime = document.getElementById("new-time").value;
+            const ndate = document.getElementById("new-date").value;
+            const ndata = { 'title': ntitle, 'date': ndate, 'time': ntime, 'eventid':eventid };
+            fetch('editevent.php', {
+                method: 'POST',
+                body: JSON.stringify(ndata),
+                headers: { 'content-type': 'application/json' }
+            })
+            .then(response=>response.json())
+            //.then(response=>response.text())
+            .then(text=>console.log(text))
+            .then(ndata=> {
+                console.log(ndata);
+                alert(ndata.success ? "Event changed" : `Could not be edited: ${ndata.message}`);
+                })
+            
+            .catch(err => console.error(err));
+            
+        }
+
 
 
         //log in
@@ -476,6 +504,12 @@
             //currentMonth.month;
             document.getElementById("year").textContent = currentMonth.year;
 
+            //clear calendar dates
+            let date = document.getElementsByClassName("day-num");
+            for (let d in date) {
+                document.getElementsByClassName("day-num")[d].textContent = "";
+            }
+
             let weeks = currentMonth.getWeeks();
             
             for (let w in weeks) {
@@ -525,12 +559,14 @@
                             document.getElementById(calendar_date).children[1].appendChild(event);
                             //event.addEventListener("click", showdialog(event.id), false);
                             document.getElementById(calendar_date).children[1].addEventListener("click", showDialog, false);
+
                         }
 
                     }
                 }
             }
         }
+
         function showDialog() { 
         //     let eventid = event.target.id; //use to access the specific event in mysql
         //     alert(eventid);
