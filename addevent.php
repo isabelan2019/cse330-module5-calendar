@@ -8,10 +8,11 @@ $json_obj = json_decode($json_str, true);
 $title=$json_obj[(string)'title'];
 $time=$json_obj['time'];
 $date=$json_obj['date'];
+$token=$json_obj['token'];
 
 
 //token does not pass
-// if(!hash_equals($_SESSION['token'], $_POST['token'])){
+// if(!hash_equals($_SESSION['token'], $token)){
 // 	die("Request forgery detected");
 // }
 

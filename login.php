@@ -38,9 +38,10 @@ if($cnt==1 && password_verify($pwd_guess, $pwd_hash)){
     $_SESSION['user_id'] = (int) $user_id;
     //generate token
     $_SESSION['token'] = bin2hex(random_bytes(32));
+    $token = $_SESSION['token'];
     echo json_encode(array(
         "success" => true,
-        "token"=> $_SESSION['token']
+        "token"=> $token
     ));
     exit;
 } else {
