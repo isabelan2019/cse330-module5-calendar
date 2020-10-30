@@ -5,14 +5,11 @@ session_start();
 header("Content-Type: application/json"); 
 $json_str = file_get_contents('php://input');
 $json_obj = json_decode($json_str, true);
-$title=$json_obj[(string)'title'];
-$time=$json_obj['time'];
-$date=$json_obj['date'];
-
-//token does not pass
-// if(!hash_equals($_SESSION['token'], $_POST['token'])){
-// 	die("Request forgery detected");
-// }
+$new_title = $json_obj[(string)'new-event-title'] ;
+$new_date = $json_obj[(string) "new-date"];
+$new_time = $json_obj[(string) "new-time"];
+$event_id = 1;
+//$json_obj[(int) "eventid"];
 
 if(!isset($_SESSION['user_id'])){
     echo json_encode(array(
@@ -21,17 +18,23 @@ if(!isset($_SESSION['user_id'])){
     exit;
 }
 else{
-    $user_id=$_SESSION['user_id'];
-   if(empty($title) || empty($time) || empty($date)){
-    echo json_encode(array(
+    $user_id=(int) $_SESSION['user_id'];
+
+    //token does not pass
+    // if(!hash_equals($_SESSION['token'], $_POST['token'])){
+    //     die("Request forgery detected");
+    // }
+
+    if(empty($new_title) || empty($new_time) || empty($new_date)){
+        echo json_encode(array(
         "success"=>false,
         "message"=>"empty inputs"
     ));
     exit;
-   }
-   else{
+}
+else{
 
-    $stmt=$mysqli->prepare("INSERT into events(user_id, title, date, time) values(?,?,?,?)");
+    $stmt=$mysqli->prepare("update events set title=?, date=?, time=? from events where event_id=?");
     if (!$stmt) {
         echo json_encode(array(
             "success" => false,
@@ -39,7 +42,7 @@ else{
         ));
         exit;
     }
-    $stmt->bind_param('isss',$user_id,$title,$date,$time);
+    $stmt->bind_param('sssi',$new_title,$new_date,$new_time,$event_id);
     $stmt->execute();
     echo json_encode(array(
         "success" => true
@@ -47,5 +50,7 @@ else{
     $stmt->close();
     }
 }
-?>
 
+exit;
+
+?>
