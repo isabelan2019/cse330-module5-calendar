@@ -248,7 +248,7 @@
     <input type="time" id="time" name="time" required>
     <button id="add"> Add Event</button>
 
-    <form id="modifyEvent">
+    <div id="modifyEvent">
         <label for="new-event-title">Event Title: </label>
         <input type="text" id="new-event-title" name="event-title" required>
         <label for="new-event-date">Event Date: </label>
@@ -256,7 +256,7 @@
         <label for="time">Event Time: </label>
         <input type="time" id="new-time" name="time" required>
         <button id="edit"> Edit Event</button>
-    </form>
+    </div>
 
     <script>
 
@@ -265,7 +265,7 @@
         document.getElementById("add").addEventListener("click", addEvent, false);
         document.getElementById("add").addEventListener("click", updateCalendar, false);
         document.getElementById("logout-btn").addEventListener("click", logoutAjax, false);
-        document.getElementById("edit").addEventListener("click", showdialog, false);
+        document.getElementById("edit").addEventListener("click", editEvent, false);
 
         //add event to server
         function addEvent(event) {
@@ -286,12 +286,38 @@
                         alert("You must be logged in.");
                     }
                     else {
-                        console.log(data.success ? "Event added" : `Event unable to be added:${data.message}`);
+                        alert(data.success ? "Event added" : `Event unable to be added:${data.message}`);
                     }
                 })
 
                 .catch(err => console.error(err));
         }
+
+        //edit event 
+        function editEvent(event){
+            event.preventDefault();
+            const eventid = event.target.id;
+            const ntitle = document.getElementById("new-event-title").value;
+            const ntime = document.getElementById("new-time").value;
+            const ndate = document.getElementById("new-date").value;
+            const ndata = { 'title': ntitle, 'date': ndate, 'time': ntime, 'eventid':eventid };
+            fetch('editevent.php', {
+                method: 'POST',
+                body: JSON.stringify(ndata),
+                headers: { 'content-type': 'application/json' }
+            })
+            .then(response=>response.json())
+            //.then(response=>response.text())
+            .then(text=>console.log(text))
+            .then(ndata=> {
+                console.log(ndata);
+                alert(ndata.success ? "Event changed" : `Could not be edited: ${ndata.message}`);
+                })
+            
+            .catch(err => console.error(err));
+            
+        }
+
 
 
         //log in
@@ -482,6 +508,12 @@
             //currentMonth.month;
             document.getElementById("year").textContent = currentMonth.year;
 
+            //clear calendar dates
+            let date = document.getElementsByClassName("day-num");
+            for (let d in date) {
+                document.getElementsByClassName("day-num")[d].textContent = "";
+            }
+
             let weeks = currentMonth.getWeeks();
             console.log(weeks);
             for (let w in weeks) {
@@ -528,20 +560,18 @@
                             let eventText = document.createTextNode(jsonData[n].title + " at " + jsonData[n].time);
                             event.appendChild(eventText);
                             event.id = eventID;
-                            document.getElementById(calendar_date).children[1].appendChild(event);
-                            //event.addEventListener("click", showdialog(event.id), false);
+                            document.getElementById(calendar_date).children[1].appendChild(event); 
+                            //let eventButton = document.createElement("button");
+                            //document.getElementById(calendar_date).children[1].appendChild(eventButton);
                             document.getElementById(calendar_date).children[1].addEventListener("click", showdialog, false);
+                            //eventButton.addEventListener("click", showdialog, false);
                         }
 
                     }
                 }
             }
         }
-        function showdialog() { 
-            let eventid = event.target.id; //use to access the specific event in mysql
-            alert(eventid);
-           // $("#edit").dialog();
-        }
+        
 
         $(function() {
             function showdialog() {
@@ -570,6 +600,13 @@
                 //for showdialog()
             }
         });
+        //use to access the specific event in mysql
+
+        function showdialog() { 
+            let eventid = event.target.id; 
+            alert(eventid);
+            $("#modifyEvent").dialog();
+        }
 
 
     </script>
