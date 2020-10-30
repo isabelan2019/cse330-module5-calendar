@@ -241,6 +241,7 @@
     <input type="date" id="date" name="date">
     <label for="time">Event Time: </label>
     <input type="time" id="time" name="time">
+    <input type='hidden' id="addToken" value="">
     <button id="add"> Add Event</button>
     </div>  
     <div id="event-details">
@@ -269,9 +270,10 @@
             const title = document.getElementById("event-title").value;
             const time = document.getElementById("time").value;
             const date = document.getElementById("date").value;
+            const addToken = document.getElementById("token1").value;
             // const token= document.getElementById("token1").value;
-            // console.log(token);
-            const data = { 'title': title, 'date': date, 'time': time };
+            console.log(addToken);
+            const data = { 'title': title, 'date': date, 'time': time, 'token':token };
             fetch("addevent.php", {
                 method: 'POST',
                 body: JSON.stringify(data),
@@ -295,6 +297,7 @@
         }
 
         //log in
+        let loginToken= "";
         function loginAjax(event) {
             const username = document.getElementById("username").value; // Get the username from the form
             const password = document.getElementById("password").value; // Get the password from the form
@@ -307,14 +310,17 @@
             })
                 .then(response => response.json())
                 .then(data => {
-                    
+                    //console.log(data);
                     console.log(data.success ? "You've been logged in!" : `You were not logged in ${data.message}`);
                     if (data.success == true) {
+                        loginToken = data.token;
+                        
                         // token1=document.createElement('input');
                         // token1.appendChild(document.createTextNode(data.token));
                         // token1.id="token1";
+                        // token1.value=data.token;
                         // token1.setAttribute('type','hidden');
-                        // document.getElementById("addEventForm").appendChild(token1);
+                        //document.getElementById("addToken").appendChild(data.token);
 
                         // token2=document.createElement('input');
                         // token2.appendChild(document.createTextNode(data.token));
@@ -333,6 +339,8 @@
                 .catch(err => console.error(err));
             document.getElementById('username').value = "";
             document.getElementById('password').value = "";
+            //set token
+            document.getElementById('addToken').value=loginToken;
 
         }
         //log out
@@ -514,7 +522,6 @@
                     document.getElementsByClassName("week")[w].children[d].firstElementChild.textContent = days[d].getDate();
                     document.getElementsByClassName("week")[w].children[d].id = days[d].toISOString().split('T')[0];
 
-
                 }
             }
             //get events 
@@ -523,6 +530,7 @@
                 .then(data => {
                     if (data.logged != false) {
                         console.log('Success', JSON.stringify(data));
+                        //console.log(data);
                         parseEvents(data);
                     }
                 })
@@ -536,7 +544,7 @@
 
 
             let jsonData = JSON.parse(JSON.stringify(response));
-            
+            console.log(jsonData);
             let calendar_days = document.getElementsByClassName("day");
             for (let i = 0; i < calendar_days.length; i++) {
                 let calendar_date = calendar_days[i].id;
@@ -558,6 +566,13 @@
                             //show dialogue box
                             document.getElementById(calendar_date).children[1].addEventListener("click", showDialog, false);
 
+                            //hidden token to events
+                            let eventToken=document.createElement('input');
+                            eventToken.appendChild(document.createTextNode(jsonData[n].token));
+                            eventToken.className="token";
+                            eventToken.setAttribute('type','hidden');
+                            document.getElementById(calendar_date).children[1].appendChild(eventToken);
+
                         }
 
                     }
@@ -578,7 +593,8 @@
                 const ntitle = document.getElementById("new-event-title").value;
                 const ntime = document.getElementById("new-time").value;
                 const ndate = document.getElementById("new-date").value;
-                const data = { 'new-event-title': ntitle, 'new-date': ndate, 'new-time': ntime, 'eventid':eventid };
+                const token = document.getElementsByClassName("token")[0].value;
+                const data = { 'new-event-title': ntitle, 'new-date': ndate, 'new-time': ntime, 'eventid':eventid, 'token':token };
                 fetch('editevent.php', {
                     method: 'POST',
                     body: JSON.stringify(data),
@@ -615,33 +631,6 @@
             }
         }
 
-        // $(function() {
-        //     function showdialog() {
-        //         let eventid = event.target.id; //use to access the specific event in mysql
-        //         //let eventid = this.id;
-        //         alert(eventid);
-        //         $("#modifyEvent").dialog({
-        //             autoOpen: false,
-        //             height: 400,
-        //             width: 350,
-        //             modal: true,
-        //             buttons: {
-        //                 "Edit Event": editEvent,
-        //                 Cancel: function () {
-        //                     dialog.dialog("close");
-        //                 }
-        //             },
-        //             close: function () {
-        //             }
-        //         });
-        //         $("#edit").button().on("click", function () {
-        //             dialog.dialog("open");
-        //         });
-        //     }
-        //     function editEvent() {
-        //         //for showdialog()
-        //     }
-        // });
 
 
     </script>

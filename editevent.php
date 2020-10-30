@@ -9,7 +9,8 @@ $json_obj = json_decode($json_str, true);
 $new_title = $json_obj[(string)'new-event-title'] ;
 $new_date = $json_obj[(string) "new-date"];
 $new_time = $json_obj[(string) "new-time"];
-$event_id=$json_obj["eventid"];
+$event_id=$json_obj[(int)"eventid"];
+$token=$json_obj['token'];
 
 //$json_obj[(int) "eventid"];
 
@@ -23,9 +24,9 @@ else{
     $user_id=(int) $_SESSION['user_id'];
 
     //token does not pass
-    // if(!hash_equals($_SESSION['token'], $_POST['token'])){
-    //     die("Request forgery detected");
-    // }
+    if(!hash_equals($_SESSION['token'], $_POST['token'])){
+        die("Request forgery detected");
+    }
 
     if(empty($new_title) || empty($new_time) || empty($new_date)){
         echo json_encode(array(
