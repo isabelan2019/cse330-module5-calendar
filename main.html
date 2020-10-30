@@ -6,17 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calendar</title>
     <link type="text/css" rel="stylesheet" href="calendar-display.css">
-
-    <!--for jquery dialog-->
-    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/themes/start/jquery-ui.css" type="text/css"
-        rel="Stylesheet" />
-    <!-- We need the style sheet linked above or the dialogs/other parts of jquery-ui won't display correctly!-->
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.min.js"></script>
-    <!-- The main library. Note: must be listed before the jquery-ui library -->
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.5/jquery-ui.min.js"></script>
-    <!-- jquery-UI hosted on Google's Ajax CDN-->
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- jquery -->
+    <link rel="stylesheet" type="text/css" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    
 </head>
 
 <body>
@@ -246,17 +240,17 @@
     <input type="date" id="date" name="date" required>
     <label for="time">Event Time: </label>
     <input type="time" id="time" name="time" required>
-    <button id="add"> Add Event</button>
+    <button id="edit"> Add Event</button>
 
-    <form id="modifyEvent">
+    <div id="event-details">
         <label for="new-event-title">Event Title: </label>
         <input type="text" id="new-event-title" name="event-title" required>
         <label for="new-event-date">Event Date: </label>
         <input type="date" id="new-date" name="date" required>
         <label for="time">Event Time: </label>
         <input type="time" id="new-time" name="time" required>
-        <button id="edit"> Edit Event</button>
-    </form>
+        <button id="add"> Edit Event</button>
+    </div>
 
     <script>
 
@@ -265,7 +259,7 @@
         document.getElementById("add").addEventListener("click", addEvent, false);
         document.getElementById("add").addEventListener("click", updateCalendar, false);
         document.getElementById("logout-btn").addEventListener("click", logoutAjax, false);
-        document.getElementById("edit").addEventListener("click", showdialog, false);
+        
 
         //add event to server
         function addEvent(event) {
@@ -483,7 +477,7 @@
             document.getElementById("year").textContent = currentMonth.year;
 
             let weeks = currentMonth.getWeeks();
-            console.log(weeks);
+            
             for (let w in weeks) {
                 let days = weeks[w].getDates();
                 // days contains normal JavaScript Date objects.
@@ -515,11 +509,11 @@
 
 
             let jsonData = JSON.parse(JSON.stringify(response));
-            console.log(jsonData.length);
+            
             let calendar_days = document.getElementsByClassName("day");
             for (let i = 0; i < calendar_days.length; i++) {
                 let calendar_date = calendar_days[i].id;
-                console.log(calendar_date);
+                
                 for (let n = 0; n < jsonData.length; n++) {
                     if (calendar_date == jsonData[n].date) {
                         let eventID = jsonData[n].event_id;
@@ -530,46 +524,47 @@
                             event.id = eventID;
                             document.getElementById(calendar_date).children[1].appendChild(event);
                             //event.addEventListener("click", showdialog(event.id), false);
-                            document.getElementById(calendar_date).children[1].addEventListener("click", showdialog, false);
+                            document.getElementById(calendar_date).children[1].addEventListener("click", showDialog, false);
                         }
 
                     }
                 }
             }
         }
-        function showdialog() { 
-            let eventid = event.target.id; //use to access the specific event in mysql
-            alert(eventid);
-           // $("#edit").dialog();
+        function showDialog() { 
+        //     let eventid = event.target.id; //use to access the specific event in mysql
+        //     alert(eventid);
+        //    // $("#edit").dialog();
+            $("#event-details").dialog();
         }
 
-        $(function() {
-            function showdialog() {
-                let eventid = event.target.id; //use to access the specific event in mysql
-                //let eventid = this.id;
-                alert(eventid);
-                $("#modifyEvent").dialog({
-                    autoOpen: false,
-                    height: 400,
-                    width: 350,
-                    modal: true,
-                    buttons: {
-                        "Edit Event": editEvent,
-                        Cancel: function () {
-                            dialog.dialog("close");
-                        }
-                    },
-                    close: function () {
-                    }
-                });
-                $("#edit").button().on("click", function () {
-                    dialog.dialog("open");
-                });
-            }
-            function editEvent() {
-                //for showdialog()
-            }
-        });
+        // $(function() {
+        //     function showdialog() {
+        //         let eventid = event.target.id; //use to access the specific event in mysql
+        //         //let eventid = this.id;
+        //         alert(eventid);
+        //         $("#modifyEvent").dialog({
+        //             autoOpen: false,
+        //             height: 400,
+        //             width: 350,
+        //             modal: true,
+        //             buttons: {
+        //                 "Edit Event": editEvent,
+        //                 Cancel: function () {
+        //                     dialog.dialog("close");
+        //                 }
+        //             },
+        //             close: function () {
+        //             }
+        //         });
+        //         $("#edit").button().on("click", function () {
+        //             dialog.dialog("open");
+        //         });
+        //     }
+        //     function editEvent() {
+        //         //for showdialog()
+        //     }
+        // });
 
 
     </script>
