@@ -9,6 +9,7 @@ $title=$json_obj[(string)'title'];
 $time=$json_obj['time'];
 $date=$json_obj['date'];
 
+
 //token does not pass
 // if(!hash_equals($_SESSION['token'], $_POST['token'])){
 // 	die("Request forgery detected");
@@ -22,7 +23,12 @@ if(!isset($_SESSION['user_id'])){
 }
 else{
     $user_id=$_SESSION['user_id'];
-   if(empty($title) || empty($time) || empty($date)){
+    // $token=$json_obj['token'];
+    // if(!hash_equals($_SESSION['token'], $token)){
+    //      //	die("Request forgery detected");
+    //      exit;
+    //      }
+    if(empty($title) || empty($time) || empty($date)){
     echo json_encode(array(
         "success"=>false,
         "message"=>"empty inputs"

@@ -5,10 +5,12 @@ session_start();
 header("Content-Type: application/json"); 
 $json_str = file_get_contents('php://input');
 $json_obj = json_decode($json_str, true);
+
 $new_title = $json_obj[(string)'new-event-title'] ;
 $new_date = $json_obj[(string) "new-date"];
 $new_time = $json_obj[(string) "new-time"];
-$event_id = 1;
+$event_id=$json_obj["eventid"];
+
 //$json_obj[(int) "eventid"];
 
 if(!isset($_SESSION['user_id'])){
@@ -32,23 +34,23 @@ else{
     ));
     exit;
 }
-else{
+    else{
 
-    $stmt=$mysqli->prepare("update events set title=?, date=?, time=? from events where event_id=?");
-    if (!$stmt) {
+        $stmt=$mysqli->prepare("update events set title=?, date=?, time=? where event_id=?");
+        if (!$stmt) {
+            echo json_encode(array(
+                "success" => false,
+                "message" => "ERROR inserting into database"
+            ));
+            exit;
+        }
+        $stmt->bind_param('sssi',$new_title,$new_date,$new_time,$event_id);
+        $stmt->execute();
         echo json_encode(array(
-            "success" => false,
-            "message" => "ERROR inserting into database"
+            "success" => true
         ));
-        exit;
-    }
-    $stmt->bind_param('sssi',$new_title,$new_date,$new_time,$event_id);
-    $stmt->execute();
-    echo json_encode(array(
-        "success" => true
-    ));
-    $stmt->close();
-    }
+        $stmt->close();
+        }
 }
 
 exit;
