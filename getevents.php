@@ -36,7 +36,7 @@ while($stmt->fetch()){
         "date"=>array($date),
         "time"=>array($time),
         "token"=>$_SESSION['token']
-        
+
     ));
 }
 echo json_encode($eventsArray);

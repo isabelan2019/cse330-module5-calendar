@@ -7,15 +7,17 @@
     <title>Calendar</title>
     <link type="text/css" rel="stylesheet" href="calendar.css">
     <!-- jquery -->
-    <link rel="stylesheet" type="text/css" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+    <link rel="stylesheet" type="text/css"
+        href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-    
+    <script type="text/javascript"
+        src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+
 </head>
 
 <body>
     <div id="loginform">
-    <p>Login</p>
+        <p>Login</p>
         <label for="username">Username: </label>
         <input type="text" id="username" name="username" placeholder="Username" required>
         <label for="current-password">Password: </label>
@@ -237,16 +239,16 @@
     </table>
 
     <div id="addEventForm">
-    <label for="event-title">Event Title: </label>
-    <input type="text" id="event-title" name="event-title">
-    <label for="event-date">Event Date: </label>
-    <input type="date" id="date" name="date">
-    <label for="time">Event Time: </label>
-    <input type="time" id="time" name="time">
-    <input type='hidden' id="addToken" value="">
-    <button id="add"> Add Event</button>
-    </div>  
-    <div id="event-details">
+        <label for="event-title">Event Title: </label>
+        <input type="text" id="event-title" name="event-title">
+        <label for="event-date">Event Date: </label>
+        <input type="date" id="date" name="date">
+        <label for="time">Event Time: </label>
+        <input type="time" id="time" name="time">
+        <input type='hidden' id="addToken" value="">
+        <button id="add"> Add Event</button>
+    </div>
+    <div id="event-details" title="Edit Event">
         <p id="event-description"></p>
         <label for="new-event-title">Event Title: </label>
         <input type="text" id="new-event-title" name="new-event-title">
@@ -254,9 +256,11 @@
         <input type="date" id="new-date" name="new-date">
         <label for="time">Event Time: </label>
         <input type="time" id="new-time" name="new-time">
-        <button id="edit"> Edit Event</button>
+        <input type='hidden' id="editToken" value=""> 
+        <button id="edit"> Edit Event</button> 
         <button id="delete"> Delete Event</button>
-    </div> 
+        <button id="share"> Share Event with: </button> <input type="text" id="shared-user" name="shared-user">
+    </div>
 
     <script>
 
@@ -264,7 +268,7 @@
         document.getElementById("login-btn").addEventListener("click", loginAjax, false);
         document.getElementById("add").addEventListener("click", addEvent, false);
         document.getElementById("logout-btn").addEventListener("click", logoutAjax, false);
-        
+
 
         //add event to server
         function addEvent(event) {
@@ -272,34 +276,37 @@
             const title = document.getElementById("event-title").value;
             const time = document.getElementById("time").value;
             const date = document.getElementById("date").value;
-            const addToken = document.getElementById("token1").value;
+            const addToken = document.getElementById("addToken").value;
             // const token= document.getElementById("token1").value;
             console.log(addToken);
-            const data = { 'title': title, 'date': date, 'time': time, 'token':token };
+            const data = { 'title': title, 'date': date, 'time': time, 'token': addToken };
             fetch("addevent.php", {
                 method: 'POST',
                 body: JSON.stringify(data),
                 headers: { 'content-type': 'application/json' }
             })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.loggedin == false) {
-                        console.log(data.loggedin);
-                        alert("You must be logged in.");
-                    }
-                    else {
-                        updateCalendar();
-                        alert(data.success ? "Event added" : `Event unable to be added:${data.message}`);
-                        
-                    }
-                })
+            .then(response => response.json())
+            .then(data => {
+                if (data.loggedin == false) {
+                    console.log(data.loggedin);
+                    alert("You must be logged in.");
+                }
+                else {
+                    updateCalendar();
+                    alert(data.success ? "Event added" : `Event unable to be added:${data.message}`);
+
+                }
+            })
                 // .then(response=>response.text())
                 // .then(text=>console.log(text))
-                .catch(err => console.error(err));
+            .catch(err => console.error(err));
+            document.getElementById('event-title').value = "";
+            document.getElementById('date').value = "";
+            document.getElementById('time').value = "";
         }
 
         //log in
-        let loginToken= "";
+        let loginToken=null;
         function loginAjax(event) {
             const username = document.getElementById("username").value; // Get the username from the form
             const password = document.getElementById("password").value; // Get the password from the form
@@ -316,19 +323,10 @@
                     console.log(data.success ? "You've been logged in!" : `You were not logged in ${data.message}`);
                     if (data.success == true) {
                         loginToken = data.token;
-                        
-                        // token1=document.createElement('input');
-                        // token1.appendChild(document.createTextNode(data.token));
-                        // token1.id="token1";
-                        // token1.value=data.token;
-                        // token1.setAttribute('type','hidden');
-                        //document.getElementById("addToken").appendChild(data.token);
-
-                        // token2=document.createElement('input');
-                        // token2.appendChild(document.createTextNode(data.token));
-                        // token2.id="token1";
-                        // token2.setAttribute('type','hidden');
-                        // document.getElementById("event-details").appendChild(token2);
+                        console.log(data.token);
+                        console.log(loginToken);
+                        //hidden token to addevent form 
+                        //document.getElementById('addToken').value =data.token;
 
                         alert("You've been successfully logged in!");
                         updateCalendar();
@@ -337,21 +335,29 @@
                         alert("Incorrect Username or Password. Try again");
                     }
                 })
-
                 .catch(err => console.error(err));
-            document.getElementById('username').value = "";
-            document.getElementById('password').value = "";
-            //set token
-            document.getElementById('addToken').value=loginToken;
+
+                //hidden token to addevent form 
+                document.getElementById('addToken').value = loginToken;
+                
+                //input reset
+                document.getElementById('username').value = "";
+                document.getElementById('password').value = "";
 
         }
+        
         //log out
         function logoutAjax(event) {
             fetch("logout.php")
                 .then(response => response.json())
                 .then(data => {
                     if (data.success == true) {
-                        // document.getElementById("token1").value=null;
+                        //remove tokens 
+                        document.getElementById("addToken").value = null;
+                        let eventTokens = document.getElementsByClassName('token');
+                        for (let t in eventTokens) {
+                            document.getElementsByClassName('token')[t].value = null;
+                        }
                         // document.getElementById("token2").value=null;
                         alert("You've been successfully logged out!");
                         updateCalendar();
@@ -463,14 +469,14 @@
         document.getElementById("next-month-btn").addEventListener("click", function (event) {
             currentMonth = currentMonth.nextMonth();
             updateCalendar(); // Whenever the month is updated, we'll need to re-render the calendar in HTML
-           // alert("The new month is " + currentMonth.month + " " + currentMonth.year);
+            // alert("The new month is " + currentMonth.month + " " + currentMonth.year);
         }, false);
 
         // Change the month when the "prev" button is pressed
         document.getElementById("prev-month-btn").addEventListener("click", function (event) {
             currentMonth = currentMonth.prevMonth();// Previous month would be currentMonth.prevMonth()
             updateCalendar(); // Whenever the month is updated, we'll need to re-render the calendar in HTML
-         //   alert("The new month is " + currentMonth.month + " " + currentMonth.year);
+            //   alert("The new month is " + currentMonth.month + " " + currentMonth.year);
         }, false);
 
 
@@ -514,7 +520,7 @@
             }
 
             let weeks = currentMonth.getWeeks();
-            
+
             for (let w in weeks) {
                 let days = weeks[w].getDates();
                 // days contains normal JavaScript Date objects.
@@ -543,14 +549,15 @@
         }
         //parse out events based on database events
         function parseEvents(response) {
-
+            //hidden token to addevent form 
+            document.getElementById('addToken').value = loginToken;
 
             let jsonData = JSON.parse(JSON.stringify(response));
             console.log(jsonData);
+            
             let calendar_days = document.getElementsByClassName("day");
             for (let i = 0; i < calendar_days.length; i++) {
                 let calendar_date = calendar_days[i].id;
-                
                 for (let n = 0; n < jsonData.length; n++) {
                     if (calendar_date == jsonData[n].date) {
                         let eventID = jsonData[n].event_id;
@@ -564,16 +571,22 @@
                             event.id = eventID;
                             //append this div to the div class events 
                             document.getElementById(calendar_date).children[1].appendChild(event);
-                            //event.addEventListener("click", showdialog(event.id), false);
                             //show dialogue box
                             document.getElementById(calendar_date).children[1].addEventListener("click", showDialog, false);
 
                             //hidden token to events
-                            let eventToken=document.createElement('input');
-                            eventToken.appendChild(document.createTextNode(jsonData[n].token));
-                            eventToken.className="token";
-                            eventToken.setAttribute('type','hidden');
-                            document.getElementById(calendar_date).children[1].appendChild(eventToken);
+                            let eventToken = document.createElement('input');
+                            eventToken.value=jsonData[n].token;
+                            //appendChild(document.createTextNode(jsonData[n].token));
+                            eventToken.id = "token"+eventID;
+                            eventToken.setAttribute('type', 'hidden');
+                            event.appendChild(eventToken);
+                            //document.getElementById(calendar_date).children[1].appendChild(eventToken);
+
+                            //hidden token to addevent form 
+                            document.getElementById('addToken').value = jsonData[n].token;
+                            //hidden token to edit event details form 
+                            document.getElementById('editToken').value = jsonData[n].token;
 
                         }
 
@@ -582,54 +595,90 @@
             }
         }
 
-        function showDialog(event) { 
+        function showDialog(event) {
             let eventid = event.target.id; //use to access the specific event in mysql
+            //console.log(eventToken);
             $("#event-details").dialog();
 
-            document.getElementById("edit").addEventListener("click",editEvent, false);
-            document.getElementById("delete").addEventListener("click",deleteEvent,false);
+            document.getElementById("edit").addEventListener("click", editEvent, false);
+            document.getElementById("delete").addEventListener("click", deleteEvent, false);
+            document.getElementById("share").addEventListener("click", shareEvent, false);
+
 
             //edit event 
-            function editEvent(event){
+            function editEvent(event) {
                 event.preventDefault();
                 const ntitle = document.getElementById("new-event-title").value;
                 const ntime = document.getElementById("new-time").value;
                 const ndate = document.getElementById("new-date").value;
-                const token = document.getElementsByClassName("token")[0].value;
-                const data = { 'new-event-title': ntitle, 'new-date': ndate, 'new-time': ntime, 'eventid':eventid, 'token':token };
+                const token = document.getElementById("token"+eventid).value;
+                //console.log(token);
+                const data = { 'new-event-title': ntitle, 'new-date': ndate, 'new-time': ntime, 'eventid': eventid, 'token': token };
                 fetch('editevent.php', {
                     method: 'POST',
                     body: JSON.stringify(data),
                     headers: { 'content-type': 'application/json' }
                 })
-                .then(response=>response.json())
-               // .then(response=>response.text())
-              //  .then(text=>console.log(text))
-                 .then(data=> {
-                     updateCalendar();
-                     alert(data.success ? "Event changed" : `Could not be edited: ${ndata.message}`);
-                     })
-                
-                .catch(err => console.error(err));
+                    .then(response => response.json())
+                    // .then(response=>response.text())
+                    //  .then(text=>console.log(text))
+                    .then(data => {
+                        updateCalendar();
+                        alert(data.success ? "Event changed" : `Could not be edited: ${data.message}`);
+                    })
+
+                    .catch(err => console.error(err));
+                document.getElementById('new-event-title').value = "";
+                document.getElementById('new-date').value = "";
+                document.getElementById('new-time').value = "";
                 $("#event-details").dialog('close');
             }
 
-            function deleteEvent(event){
+            function deleteEvent(event) {
+                console.log(eventid);
                 event.preventDefault();
-                const data={'eventid':eventid};
+                const token = document.getElementById("token"+eventid).value;
+                console.log(token);
+                const data = { 'eventid': eventid, 'token':token };
                 fetch('deleteevent.php', {
                     method: 'POST',
                     body: JSON.stringify(data),
                     headers: { 'content-type': 'application/json' }
                 })
-                .then(response=>response.json())
-                .then(data=> {
-                     updateCalendar();
-                     alert(data.success ? "Event deleted" : `Could not be deleted: ${data.message}`);
-                     })
+                .then(response => response.json())
+                .then(data => {
+                    updateCalendar();
+                    alert(data.success ? "Event deleted" : `Could not be deleted: ${data.message}`);
+                })
                 .catch(err => console.error(err));
                 $("#event-details").dialog('close');
 
+            }
+            function shareEvent(event){
+                event.preventDefault();
+                const shareuser =  document.getElementById("shared-user").value;
+                const token = document.getElementById("token"+eventid).value;
+                const data = { 'eventid': eventid, 'shareuser':shareuser, 'token':token };
+                fetch('shareevent.php', {
+                    method: 'POST',
+                    body: JSON.stringify(data),
+                    headers: { 'content-type': 'application/json' }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.exists == false) {
+                        alert("This username does not exist. Please choose another");
+                    } else {
+                        updateCalendar();
+                        //console.log(data);
+                        alert(data.success ? "Event shared" : `Could not be shared: ${data.message}`);
+
+                    }
+                    
+                })
+                .catch(err => console.error(err));
+                document.getElementById('shared-user').value = "";
+                $("#event-details").dialog('close');
             }
         }
 
