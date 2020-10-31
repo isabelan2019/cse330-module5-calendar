@@ -41,7 +41,8 @@ if($cnt==1 && password_verify($pwd_guess, $pwd_hash)){
     $token = $_SESSION['token'];
     echo json_encode(array(
         "success" => true,
-        "token"=> $token
+        "token"=> $token,
+        'username'=>$username
     ));
     exit;
 } else {

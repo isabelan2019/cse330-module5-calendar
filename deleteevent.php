@@ -15,11 +15,12 @@ if(!isset($_SESSION['user_id'])){
 }
 else{
     $user_id=(int) $_SESSION['user_id'];
-
+    $token=$json_obj['token'];
     //token does not pass
-    // if(!hash_equals($_SESSION['token'], $_POST['token'])){
-    //     die("Request forgery detected");
-    // }
+    if(!hash_equals($_SESSION['token'], $token)){
+        die("Request forgery detected");
+    }
+
 
     $stmt=$mysqli->prepare("delete from events where event_id=?");
     if (!$stmt) {

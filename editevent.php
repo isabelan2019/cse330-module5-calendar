@@ -10,7 +10,7 @@ $new_title = $json_obj[(string)'new-event-title'] ;
 $new_date = $json_obj[(string) "new-date"];
 $new_time = $json_obj[(string) "new-time"];
 $event_id=$json_obj[(int)"eventid"];
-$token=$json_obj['token'];
+
 
 //$json_obj[(int) "eventid"];
 
@@ -22,9 +22,9 @@ if(!isset($_SESSION['user_id'])){
 }
 else{
     $user_id=(int) $_SESSION['user_id'];
-
+    $token=$json_obj['token'];
     //token does not pass
-    if(!hash_equals($_SESSION['token'], $_POST['token'])){
+    if(!hash_equals($_SESSION['token'], $token)){
         die("Request forgery detected");
     }
 
