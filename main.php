@@ -1,3 +1,12 @@
+<?php
+ini_set("session.cookie_httponly", 1);
+session_start();
+if (isset($_SESSION['userid'])) {
+$username=(string) $_SESSION['username'];
+$token=$_SESSION['token'];
+}
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -16,6 +25,7 @@
 </head>
 
 <body>
+
     <div id="loginform">
         <p>Login</p>
         <label for="username">Username: </label>
@@ -24,7 +34,6 @@
         <input type="password" id="password" name="password" placeholder="Password" required>
         <button name="login-btn" id="login-btn"> Log In </button>
     </div>
-    <button name="logout-btn" id="logout-btn"> Log Out </button>
 
     <p>New User? Register Below!</p>
     <label for="new-username">New Username: </label>
@@ -34,9 +43,39 @@
     <input type="button" name="create-user" id="create-user" value="Create Account">
 
     <div id="username">
-        <p id="welcometext"></p>
-
+        <p id="welcometext">
+        </p>
+        <button id="shareCalendar"> Share Calendar with: </button> <input type="text" id="sharedcal-user" name="sharedcal-user">
+        <br><button name='logout-btn' id='logout-btn'> Log Out </button>
     </div>
+    <?php
+        // if (isset($_SESSION['user_id'])) {
+        //     // show logout button 
+        //     $username=(string) $_SESSION['username'];
+        //     printf("<br>not you? <button name='logout-btn' id='logout-btn'> Log Out </button>");
+        // }
+        // else{ 
+        //     //not logged in -- show log in and register user
+        //     echo "\n\t 
+        //     <div id='loginform'>
+        //         <p>Login</p>
+        //         <label for='username'>Username: </label>
+        //         <input type='text' id='username' name='username' placeholder='Username' required>
+        //         <label for='current-password'>Password: </label>
+        //         <input type='password' id='password' name='password' placeholder='Password' required>
+        //         <button name='login-btn' id='login-btn'> Log In </button>
+        //     </div>";
+
+        //     echo "\n\t
+        //     <p>New User? Register Below!</p>
+        //     <label for='new-username'>New Username: </label>
+        //     <input type='text' id='new-username' name='new-username' placeholder='New Username' required>
+        //     <label for='new-password'>New Password: </label>
+        //     <input type='password' id='new-password' name='new-password' placeholder='New Password' required>
+        //     <input type='button' name='create-user' id='create-user' value='Create Account'>
+        //     ";
+        // }
+    ?>
 
     <div id="monthyear">
         <p id="month"></p>
@@ -245,6 +284,9 @@
         <input type="date" id="date" name="date">
         <label for="time">Event Time: </label>
         <input type="time" id="time" name="time">
+        <label> personal:<input name="tag" type="radio" id="personal" value="personal"/> </label>
+        <label> school:<input name="tag" type="radio" id="school" value="school" /> </label>
+        <label> work:<input name="tag" type="radio" id="work" value="work" /> </label>
         <input type='hidden' id="addToken" value="">
         <button id="add"> Add Event</button>
     </div>
@@ -256,6 +298,9 @@
         <input type="date" id="new-date" name="new-date">
         <label for="time">Event Time: </label>
         <input type="time" id="new-time" name="new-time">
+        <label> personal:<input name="tag" type="radio" id="personal" value="personal"/> </label>
+        <label> school:<input name="tag" type="radio" id="school" value="school" /> </label>
+        <label> work:<input name="tag" type="radio" id="work" value="work" /> </label>
         <input type='hidden' id="editToken" value=""> 
         <button id="edit"> Edit Event</button> 
         <button id="delete"> Delete Event</button>
@@ -268,7 +313,7 @@
         document.getElementById("login-btn").addEventListener("click", loginAjax, false);
         document.getElementById("add").addEventListener("click", addEvent, false);
         document.getElementById("logout-btn").addEventListener("click", logoutAjax, false);
-
+        document.getElementById("shareCalendar").addEventListener("click", shareCalendar, false);
 
         //add event to server
         function addEvent(event) {
@@ -277,9 +322,17 @@
             const time = document.getElementById("time").value;
             const date = document.getElementById("date").value;
             const addToken = document.getElementById("addToken").value;
-            // const token= document.getElementById("token1").value;
-            console.log(addToken);
-            const data = { 'title': title, 'date': date, 'time': time, 'token': addToken };
+            
+            let tags = document.getElementsByName('tag');
+            let checkedtag =null;
+            for (let i=0; i<tags.length; i++){
+                if (tags[i].checked){
+                    checkedtag = tags[i].value;
+                }
+            }
+            //console.log(checkedtag);
+              
+            const data = { 'title': title, 'date': date, 'time': time, 'tag':checkedtag, 'token': addToken };
             fetch("addevent.php", {
                 method: 'POST',
                 body: JSON.stringify(data),
@@ -306,12 +359,12 @@
         }
 
         //log in
-        let loginToken=null;
         function loginAjax(event) {
             const username = document.getElementById("username").value; // Get the username from the form
             const password = document.getElementById("password").value; // Get the password from the form
             // Make a URL-encoded string for passing POST data:
             const data = { 'username': username, 'password': password };
+            let loginToken=null;
             fetch("login.php", {
                 method: 'POST',
                 body: JSON.stringify(data),
@@ -326,10 +379,11 @@
                         console.log(data.token);
                         console.log(loginToken);
                         //hidden token to addevent form 
-                        //document.getElementById('addToken').value =data.token;
+                        document.getElementById('addToken').value =data.token;
 
-                        alert("You've been successfully logged in!");
+                        alert("You've successfully logged in!");
                         updateCalendar();
+                        //document.getElementbyId('logout-btn').style.visibility='visible';
                     }
                     else {
                         alert("Incorrect Username or Password. Try again");
@@ -346,6 +400,7 @@
 
         }
         
+        
         //log out
         function logoutAjax(event) {
             fetch("logout.php")
@@ -360,6 +415,7 @@
                         }
                         // document.getElementById("token2").value=null;
                         alert("You've been successfully logged out!");
+                        //document.getElementbyId('logout-btn').style.visibility='hidden';
                         updateCalendar();
                     }
                     else {
@@ -368,6 +424,9 @@
                 })
                 .catch(err => console.error(err));
             updateCalendar();
+            document.getElementById('addToken').value ="";
+            document.getElementById('welcometext').innerHTML =" ";
+
         }
         //create user
         function createuserAjax(event) {
@@ -509,6 +568,13 @@
                 monthTitle = "December";
             }
 
+            //let sessiontoken=document.getElementById('addToken').value;
+            //console.log(sessiontoken);
+            //hidden token to addevent form 
+            //document.getElementById('addToken').value = sessiontoken;
+
+            
+
             document.getElementById("month").textContent = monthTitle;
             //currentMonth.month;
             document.getElementById("year").textContent = currentMonth.year;
@@ -536,7 +602,7 @@
             fetch("getevents.php")
                 .then(response => response.json())
                 .then(data => {
-                    if (data.logged != false) {
+                    if (data.loggedin != false) {
                         console.log('Success', JSON.stringify(data));
                         //console.log(data);
                         parseEvents(data);
@@ -549,12 +615,11 @@
         }
         //parse out events based on database events
         function parseEvents(response) {
-            //hidden token to addevent form 
-            document.getElementById('addToken').value = loginToken;
+            
 
             let jsonData = JSON.parse(JSON.stringify(response));
-            console.log(jsonData);
-            
+            console.log(jsonData[0].username);
+            document.getElementById('welcometext').innerHTML = jsonData[0].username+"'s Calendar";
             let calendar_days = document.getElementsByClassName("day");
             for (let i = 0; i < calendar_days.length; i++) {
                 let calendar_date = calendar_days[i].id;
@@ -612,8 +677,15 @@
                 const ntime = document.getElementById("new-time").value;
                 const ndate = document.getElementById("new-date").value;
                 const token = document.getElementById("token"+eventid).value;
+                let checkedtag =null;
+                for (let i=0; i<tags.length; i++){
+                    if (tags[i].checked){
+                        checkedtag = tags[i].value;
+                    }
+                }
+                //console.log(checkedtag);
                 //console.log(token);
-                const data = { 'new-event-title': ntitle, 'new-date': ndate, 'new-time': ntime, 'eventid': eventid, 'token': token };
+                const data = { 'new-event-title': ntitle, 'new-date': ndate, 'new-time': ntime, 'new-tag':checkedtag, 'eventid': eventid, 'token': token };
                 fetch('editevent.php', {
                     method: 'POST',
                     body: JSON.stringify(data),
@@ -667,7 +739,7 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.exists == false) {
-                        alert("This username does not exist. Please choose another");
+                        alert("This user does not exist. Please choose another");
                     } else {
                         updateCalendar();
                         //console.log(data);
@@ -680,6 +752,32 @@
                 document.getElementById('shared-user').value = "";
                 $("#event-details").dialog('close');
             }
+        }
+
+        function shareCalendar(event){
+            const sharecal = document.getElementById('sharedcal-user').value;
+            //add token value 
+            const data= {'sharecal':sharecal};
+            fetch('sharecalendar.php', {
+                method: 'POST',
+                body: JSON.stringify(data),
+                headers: { 'content-type': 'application/json' }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    if (data.exists == false) {
+                        alert("This user does not exist. Please choose another");
+                    } else {
+                        console.log(data);
+                        updateCalendar();
+                        alert(data.success ? "Calendar shared" : `Calendar could not be shared: ${data.message}`);
+
+                    }
+                    
+                })
+                .catch(err => console.error(err));
+                document.getElementById('sharedcal-user').value = "";
         }
 
 

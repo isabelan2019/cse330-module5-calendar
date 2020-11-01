@@ -58,7 +58,7 @@ else {
 
 
         //get the event that will be shared
-        $stmt=$mysqli->prepare("SELECT title, date, time from events where event_id=?");
+        $stmt=$mysqli->prepare("SELECT title, date, time,tags from events where event_id=?");
         $stmt->bind_param('i',$eventid);
         if (!$stmt) {
             echo json_encode(array(
@@ -69,14 +69,14 @@ else {
         }
         
         $stmt->execute();
-        $stmt->bind_result($sharetitle,$sharedate,$sharetime);
+        $stmt->bind_result($sharetitle,$sharedate,$sharetime, $sharetag);
         $stmt->fetch();
         $stmt->close();
 
 
 
         //add new event where the new user is shareuser
-        $stmt=$mysqli->prepare("INSERT into events(user_id, title, date, time) values(?,?,?,?)");
+        $stmt=$mysqli->prepare("INSERT into events(user_id, title, date, time, tags) values(?,?,?,?)");
         if (!$stmt) {
             echo json_encode(array(
                 "success" => false,
@@ -84,7 +84,7 @@ else {
             ));
             exit;
         }
-        $stmt->bind_param('isss',$shareid,$sharetitle,$sharedate,$sharetime);
+        $stmt->bind_param('issss',$shareid,$sharetitle,$sharedate,$sharetime, $sharetag);
         $stmt->execute();
         echo json_encode(array(
             "success" => true,

@@ -8,6 +8,7 @@ $json_obj = json_decode($json_str, true);
 $title=$json_obj[(string)'title'];
 $time=$json_obj[(string)'time'];
 $date=$json_obj[(string)'date'];
+$tag=$json_obj[(string)'tag'];
 
 if(!isset($_SESSION['user_id'])){
     echo json_encode(array(
@@ -32,7 +33,7 @@ else{
    }
    else{
 
-    $stmt=$mysqli->prepare("INSERT into events(user_id, title, date, time) values(?,?,?,?)");
+    $stmt=$mysqli->prepare("INSERT into events(user_id, title, date, time, tags) values(?,?,?,?,?)");
     if (!$stmt) {
         echo json_encode(array(
             "success" => false,
@@ -40,7 +41,7 @@ else{
         ));
         exit;
     }
-    $stmt->bind_param('isss',$user_id,$title,$date,$time);
+    $stmt->bind_param('issss',$user_id,$title,$date,$time, $tag);
     $stmt->execute();
     echo json_encode(array(
         "success" => true

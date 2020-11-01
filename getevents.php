@@ -13,7 +13,11 @@ if(isset($_SESSION['user_id'])==false){
 
 else{
 
-$user_id=$_SESSION['user_id'];
+$user_id= (int)$_SESSION['user_id'];
+$username = (string)$_SESSION['username'];
+$token = $_SESSION['token'];
+
+
 $stmt = $mysqli->prepare("SELECT event_id, title, date, time FROM events where user_id=?");
 $stmt->bind_param('i',$user_id);
 if(!$stmt){
@@ -35,8 +39,8 @@ while($stmt->fetch()){
         "title"=>array($title),
         "date"=>array($date),
         "time"=>array($time),
-        "token"=>$_SESSION['token']
-
+        "token"=>$_SESSION['token'],
+        'username'=>$_SESSION['username']
     ));
 }
 echo json_encode($eventsArray);
