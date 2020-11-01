@@ -36,6 +36,7 @@ if($cnt==1 && password_verify($pwd_guess, $pwd_hash)){
     session_start();
     //login success
     $_SESSION['user_id'] = (int) $user_id;
+    $_SESSION['username'] = (string) $username;
     //generate token
     $_SESSION['token'] = bin2hex(random_bytes(32));
     $token = $_SESSION['token'];

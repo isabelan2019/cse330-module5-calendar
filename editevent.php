@@ -10,6 +10,7 @@ $new_title = $json_obj[(string)'new-event-title'] ;
 $new_date = $json_obj[(string) "new-date"];
 $new_time = $json_obj[(string) "new-time"];
 $event_id=$json_obj[(int)"eventid"];
+$tags=$json_obj[(string)"tag"];
 
 
 //$json_obj[(int) "eventid"];

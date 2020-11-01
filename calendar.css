@@ -10,6 +10,9 @@ table{
 th{
     height: 50px;
 }
-#event-details{
+#event-details{ 
     display:none;
 }
+/* #logout-btn{
+    visibility:hidden;
+} */
