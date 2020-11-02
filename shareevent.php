@@ -5,8 +5,8 @@ session_start();
 header("Content-Type: application/json"); 
 $json_str = file_get_contents('php://input');
 $json_obj = json_decode($json_str, true);
-$shareuser = $json_obj[(string)'shareuser'];
-$eventid = (int)$json_obj['eventid'];
+$shareuser =  $json_obj['shareuser'];
+$eventid = $json_obj['eventid'];
 
 if(!isset($_SESSION['user_id'])){
     echo json_encode(array(
@@ -83,11 +83,9 @@ else {
         $stmt->close();
 
        // $username=$_SESSION['username'];
-        $newsharetitle="share event: " + $sharetitle;
-
         
-        //add new event where the new user is shareuser
-        $stmt=$mysqli->prepare("INSERT into events(user_id, title, date, time, tags) values(?,?,?,?,?)");
+        //change group_id of the event being shared
+        $stmt=$mysqli->prepare("UPDATE events set group_id=? where event_id=?");
         if (!$stmt) {
             echo json_encode(array(
                 "success" => false,
@@ -95,7 +93,25 @@ else {
             ));
             exit;
         }
-        $stmt->bind_param('issss',$shareid,$newsharetitle,$sharedate,$sharetime, $sharetag);
+        $stmt->bind_param('ii',$eventid,$eventid);
+        $stmt->execute();
+        echo json_encode(array(
+            "success" => true
+        ));
+        $stmt->close();
+        
+
+        
+        //add new event where the new user is shareuser
+        $stmt=$mysqli->prepare("INSERT into events(user_id, title, date, time, tags, group_id) values(?,?,?,?,?,?)");
+        if (!$stmt) {
+            echo json_encode(array(
+                "success" => false,
+                "message" => "ERROR inserting into database"
+            ));
+            exit;
+        }
+        $stmt->bind_param('issssi',$shareid,$sharetitle,$sharedate,$sharetime,$sharetag,$eventid);
         $stmt->execute();
         echo json_encode(array(
             "success" => true,
@@ -104,10 +120,7 @@ else {
 
         
     }
-
-
-
-
 }
+
 
 ?>

@@ -9,8 +9,9 @@ $json_obj = json_decode($json_str, true);
 $new_title = $json_obj[(string)'new-event-title'] ;
 $new_date = $json_obj[(string) "new-date"];
 $new_time = $json_obj[(string) "new-time"];
-$event_id=$json_obj[(int)"eventid"];
-$tags=$json_obj[(string)"tag"];
+$event_id=$json_obj["eventid"];
+$tags=$json_obj["new-tag"];
+$get_group_id=null;
 
 
 //$json_obj[(int) "eventid"];
@@ -35,26 +36,64 @@ else{
         "message"=>"empty inputs"
     ));
     exit;
-}
+    }
     else{
-
-        $stmt=$mysqli->prepare("update events set title=?, date=?, time=? where event_id=?");
-        if (!$stmt) {
+        //check if it's a group event
+        $stmt = $mysqli->prepare("SELECT group_id from events where event_id=?");
+        //bind parameter
+        $stmt->bind_param('i', $event_id);
+        if(!$stmt){
             echo json_encode(array(
-                "success" => false,
-                "message" => "ERROR inserting into database"
-            ));
-            exit;
-        }
-        $stmt->bind_param('sssi',$new_title,$new_date,$new_time,$event_id);
-        $stmt->execute();
-        echo json_encode(array(
-            "success" => true
+            "success" => false,
+            "message" => "ERROR checking database"
         ));
-        $stmt->close();
+        exit;
         }
-}
+        $stmt->execute();
 
-exit;
+        //bind results
+        $stmt->bind_result($group_id);
+        $stmt->fetch();
+        if($group_id!==null){
+            $get_group_id=$group_id;
+        }
+        $stmt->close();
+        if($get_group_id==null){
+            $stmt=$mysqli->prepare("update events set title=?, date=?, time=? where event_id=?");
+            if (!$stmt) {
+                echo json_encode(array(
+                    "success" => false,
+                    "message" => "ERROR inserting into database"
+                ));
+                exit;
+            }
+            $stmt->bind_param('sssi',$new_title,$new_date,$new_time,$event_id);
+            $stmt->execute();
+            echo json_encode(array(
+                "success" => true
+            ));
+            $stmt->close();
+            }
+        else{
+            $stmt=$mysqli->prepare("update events set title=?, date=?, time=? where group_id=?");
+            if (!$stmt) {
+                echo json_encode(array(
+                    "success" => false,
+                    "message" => "ERROR inserting into database"
+                ));
+                exit;
+            }
+            $stmt->bind_param('sssi',$new_title,$new_date,$new_time,$get_group_id);
+            $stmt->execute();
+            echo json_encode(array(
+                "success" => true
+            ));
+            $stmt->close();
+            }
+        }
+    }
+
+
+
 
 ?>
