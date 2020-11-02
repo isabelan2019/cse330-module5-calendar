@@ -330,7 +330,8 @@ $token=$_SESSION['token'];
         document.getElementById('schooldisplay').addEventListener("change", updateCalendar, false);
         document.getElementById('workdisplay').addEventListener("change", updateCalendar, false);
         document.getElementById('otherdisplay').addEventListener("change", updateCalendar, false);
-
+        //set global variable
+        let current_event_id=null;
 
         //add event to server
         function addEvent(event) {
@@ -440,16 +441,12 @@ $token=$_SESSION['token'];
                     }
                 })
                 .catch(err => console.error(err));
-            updateCalendar();
             document.getElementById('addToken').value ="";
             document.getElementById('welcometext').innerHTML =" ";
             document.getElementById('display').style.visibility = 'hidden'; 
             document.getElementById('loggedin').style.visibility = 'hidden'; 
             document.getElementById('loginform').style.display = 'block'; 
             document.getElementById('createuserform').style.display = 'block'; 
-
-
-
 
         }
         //create user
@@ -654,7 +651,7 @@ $token=$_SESSION['token'];
         function parseEvents(response) {
             
             let jsonData = JSON.parse(JSON.stringify(response));
-           
+            current_event_id=null;
             //console.log(jsonData[0].username);
             document.getElementById('welcometext').innerHTML = jsonData[0].user+"'s Calendar";
             document.getElementById('display').style.visibility = 'visible'; 
@@ -679,13 +676,14 @@ $token=$_SESSION['token'];
                             let eventText=" ";
                             if (jsonData[n].username == 'shared'){
                                 //shared calendar event
-                                eventText = document.createTextNode("shared event: "+jsonData[n].title + " at " + jsonData[n].time);
+                                eventText = document.createTextNode("Shared event: "+jsonData[n].title + " at " + jsonData[n].time);
                             }
                             else {
                                 //show event title and event time
                                 eventText = document.createTextNode(jsonData[n].title + " at " + jsonData[n].time);
                                 //only allow dialog box to show if it is user's own event (not shared calendar)
                                 document.getElementById(calendar_date).children[1].addEventListener("click", showDialog, false);
+                                document.getElementById(calendar_date).children[1].addEventListener("click", getEventID, false);
                             }
                             event.appendChild(eventText);
                             //set id of this div to the eventID
@@ -718,16 +716,20 @@ $token=$_SESSION['token'];
                 }
             }
         }
-        
+        document.getElementById("edit").addEventListener("click", editEvent, false);
+        document.getElementById("delete").addEventListener("click", deleteEvent, false);
+        document.getElementById("share").addEventListener("click", shareEvent, false);
+        function getEventID(event){
+            current_event_id=event.target.id
+            console.log(current_event_id);
+        }
         function showDialog(event) {
-            const eventid = event.target.id; //use to access the specific event in mysql
-            //console.log(eventToken);
-            console.log(eventid);
+            // const eventid = event.target.id; //use to access the specific event in mysql
+            // //console.log(eventToken);
+            // console.log(eventid);
             $("#event-details").dialog();
-
-            document.getElementById("edit").addEventListener("click", editEvent, false);
-            document.getElementById("delete").addEventListener("click", deleteEvent, false);
-            document.getElementById("share").addEventListener("click", shareEvent, false);
+        }
+           
 
 
             //edit event 
@@ -745,7 +747,7 @@ $token=$_SESSION['token'];
                     }
                 }
 
-                const data = { 'new-event-title': ntitle, 'new-date': ndate, 'new-time': ntime, 'new-tag':checkedtag, 'eventid': eventid, 'token': token };
+                const data = { 'new-event-title': ntitle, 'new-date': ndate, 'new-time': ntime, 'new-tag':checkedtag, 'eventid': current_event_id, 'token': token };
                 console.log(data);
                 fetch('editevent.php', {
                     method: 'POST',
@@ -769,11 +771,11 @@ $token=$_SESSION['token'];
 
             function deleteEvent(event) {
                 event.preventDefault();
-                console.log(eventid);
+                console.log(current_event_id);
                 const token = document.getElementById("deleteToken").value;
                 console.log(token);
                 
-                const data = { 'eventid': eventid, 'token':token };
+                const data = { 'eventid': current_event_id, 'token':token };
                 fetch('deleteevent.php', {
                     method: 'POST',
                     body: JSON.stringify(data),
@@ -792,35 +794,35 @@ $token=$_SESSION['token'];
                 event.preventDefault();
                 const shareuser =  document.getElementById("shared-user").value;
                 const token = document.getElementById("inviteToken").value;
-                const data = { 'eventid': eventid, 'shareuser':shareuser, 'token':token };
+                const data = { 'eventid': current_event_id, 'shareuser':shareuser, 'token':token };
                 fetch('shareevent.php', {
                     method: 'POST',
                     body: JSON.stringify(data),
                     headers: { 'content-type': 'application/json' }
                 }) 
-                // .then(response => response.json())
-                // .then(data => {
-                //     if (data.exists == false) {
-                //         alert("This user does not exist. Please choose another");
-                //     } 
-                //     // if (data.sameuser == true) {
-                //     //     alert("you cannot share with yourself");
-                //     // }
-                //     else {
-                //         updateCalendar();
-                //         //console.log(data);
-                //         alert(data.success ? "Event shared" : `Could not be shared: ${data.message}`);
+                .then(response => response.json())
+                .then(data => {
+                    if (data.exists == false) {
+                        alert("This user does not exist. Please choose another");
+                    } 
+                    // if (data.sameuser == true) {
+                    //     alert("you cannot share with yourself");
+                    // }
+                    else {
+                        updateCalendar();
+                        //console.log(data);
+                        alert(data.success ? "Event shared" : `Could not be shared: ${data.message}`);
 
-                //     }
+                    }
                     
-                // })
-                .then(response=>response.text())
-                .then(text=>console.log(text))
+                })
+                // .then(response=>response.text())
+                // .then(text=>console.log(text))
                 .catch(err => console.error(err));
                 document.getElementById('shared-user').value = "";
                 $("#event-details").dialog('close');
             }
-        }
+        
 
         function shareCalendar(event){
             const sharecal = document.getElementById('sharedcal-user').value;
