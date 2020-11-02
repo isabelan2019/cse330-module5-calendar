@@ -17,7 +17,7 @@ if(!isset($_SESSION['user_id'])){
 else {
     $user_id=$_SESSION['user_id'];
     $token=$json_obj['token'];
-    $username=$_SESSION['username'];
+    
 
     //token does not pass
     if(!hash_equals($_SESSION['token'], $token)){
@@ -82,8 +82,8 @@ else {
         $stmt->fetch();
         $stmt->close();
 
-
-        $newsharetitle=$username+"s event: " + $sharetitle;
+       // $username=$_SESSION['username'];
+        $newsharetitle="share event: " + $sharetitle;
 
         
         //add new event where the new user is shareuser

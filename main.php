@@ -34,18 +34,19 @@ $token=$_SESSION['token'];
         <button name="login-btn" id="login-btn"> Log In </button>
     </div>
 
+    <div id="createuserform"> 
     <p>New User? Register Below!</p>
     <label for="new-username">New Username: </label>
     <input type="text" id="new-username" name="new-username" placeholder="New Username" required>
     <label for="new-password">New Password: </label>
     <input type="password" id="new-password" name="new-password" placeholder="New Password" required>
     <input type="button" name="create-user" id="create-user" value="Create Account">
+    </div>
 
     <div id="loggedin">
-        <p id="welcometext">
-        </p>
-        <button id="shareCalendar"> Share Calendar with: </button> <input type="text" id="sharedcal-user" name="sharedcal-user">
-        <br><button name='logout-btn' id='logout-btn'> Log Out </button>
+        <p id="welcometext"></p>
+        <button name='logout-btn' id='logout-btn'> Log Out </button>
+        <br><button id="shareCalendar"> Share Calendar with: </button> <input type="text" id="sharedcal-user" name="sharedcal-user">
     </div>
     
     <?php
@@ -86,13 +87,11 @@ $token=$_SESSION['token'];
         </div> 
         <button id="next-month-btn"> Next Month</button>
     </div>
-    <br><br><br>
     <div id="display">
         <label> personal:<input name="displaytag" type="checkbox" id="personaldisplay" value="personal" checked/> </label>
         <label> school:<input name="displaytag" type="checkbox" id="schooldisplay" value="school" checked/> </label>
         <label> work:<input name="displaytag" type="checkbox" id="workdisplay" value="work" checked/> </label>
         <label> untagged:<input name="displaytag" type="checkbox" id="otherdisplay" value="all" checked/> </label>
-
     </div>
     
     <table id="calendar">
@@ -442,6 +441,13 @@ $token=$_SESSION['token'];
             updateCalendar();
             document.getElementById('addToken').value ="";
             document.getElementById('welcometext').innerHTML =" ";
+            document.getElementById('display').style.visibility = 'hidden'; 
+            document.getElementById('loggedin').style.visibility = 'hidden'; 
+            document.getElementById('loginform').style.visibility = 'visible'; 
+            document.getElementById('createuserform').style.visibility = 'visible'; 
+
+
+
 
         }
         //create user
@@ -650,6 +656,11 @@ $token=$_SESSION['token'];
             //console.log(jsonData[0].username);
             document.getElementById('welcometext').innerHTML = jsonData[0].username+"'s Calendar";
             document.getElementById('display').style.visibility = 'visible'; 
+            document.getElementById('loggedin').style.visibility = 'visible'; 
+            document.getElementById('loginform').style.visibility = 'hidden'; 
+            document.getElementById('createuserform').style.visibility = 'hidden'; 
+
+
             let calendar_days = document.getElementsByClassName("day");
             for (let i = 0; i < calendar_days.length; i++) {
                 let calendar_date = calendar_days[i].id;
@@ -810,9 +821,11 @@ $token=$_SESSION['token'];
                     console.log(data);
                     if (data.exists == false) {
                         alert("This user does not exist. Please choose another");
-                    } else if (data.sameuser == true) {
-                        alert("you cannot share with yourself");
-                    } else {
+                    } 
+                    //else if (data.sameuser == true) {
+                    //     alert("you cannot share with yourself");
+                    // } 
+                    else {
                         console.log(data);
                         updateCalendar();
                         alert(data.success ? "Calendar shared" : `Calendar could not be shared: ${data.message}`);

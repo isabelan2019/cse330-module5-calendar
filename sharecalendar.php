@@ -50,7 +50,7 @@ else {
         $stmt->close();
 
         //check if shareuser is the same as current 
-        if ($user_id = $shareid){
+        if ($user_id == $shareid){
             echo json_encode(array(
                 "sameuser" => true,
             ));
