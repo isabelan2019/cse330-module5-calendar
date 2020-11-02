@@ -49,10 +49,17 @@ else {
         }
         $stmt->close();
 
-        //get all the events that will be shared
-        $sharedevents = array();
-        $stmt=$mysqli->prepare("SELECT title, date, time, tags from events where user_id=?");
-        $stmt->bind_param('i',$user_id);
+        //check if shareuser is the same as current 
+        if ($user_id = $shareid){
+            echo json_encode(array(
+                "sameuser" => true,
+            ));
+            exit;
+        }
+
+        //add share data to mysql 
+        $stmt=$mysqli->prepare("insert into shares (sender_id, receiver_id) values (?,?) ");
+        $stmt->bind_param('ii',$user_id, $shareid);
         if (!$stmt) {
             echo json_encode(array(
                 "success" => false,
@@ -60,39 +67,11 @@ else {
             ));
             exit;
         }
-        
         $stmt->execute();
-        $stmt->bind_result($sharetitles,$sharedates,$sharetimes, $sharetags);
-        while ($stmt->fetch()){
-            array_push($sharedevents, array(
-                'eventtitles'=>$sharetitles,
-                'eventdates'=>$sharedates,
-                'eventtimes'=>$sharetimes,
-                'sharetags'=>$sharetags
-            ));
-        }
-        //echo json_encode($sharedevents);
+        echo json_encode(array(
+            "success" => true
+        ));
         $stmt->close();
-        
-        //add new event where the new user is shareuser
-        // for ($i=0; $i<=count($sharedevents); $i++){
-        //     $stmt=$mysqli->prepare("INSERT into events(user_id, title, date, time, tags) values(?,?,?,?,?)");
-        //     if (!$stmt) {
-        //         echo json_encode(array(
-        //             "success" => false,
-        //             "message" => "ERROR inserting into database"
-        //         ));
-        //         exit;
-        //     }
-        //     $stmt->bind_param('issss',$shareid,$sharetitles[$i],$sharedates[$i],$sharetimes[$i], $sharetags[$i]);
-        //     $stmt->execute();
-        //     $stmt->close();
-        // }
-        // echo json_encode(array(
-        //     "success" => true
-        // ));
-       // exit;
-        
 
     }
 

@@ -17,6 +17,7 @@ if(!isset($_SESSION['user_id'])){
 else {
     $user_id=$_SESSION['user_id'];
     $token=$json_obj['token'];
+    $username=$_SESSION['username'];
 
     //token does not pass
     if(!hash_equals($_SESSION['token'], $token)){
@@ -56,9 +57,17 @@ else {
         }
         $stmt->close();
 
+        //check if shareuser is the same as current 
+        // if ($user_id == $shareid){
+        //     echo json_encode(array(
+        //         "sameuser" => true,
+        //     ));
+        //     exit;
+        // }
+
 
         //get the event that will be shared
-        $stmt=$mysqli->prepare("SELECT title, date, time,tags from events where event_id=?");
+        $stmt=$mysqli->prepare("SELECT title, date, time, tags from events where event_id=?");
         $stmt->bind_param('i',$eventid);
         if (!$stmt) {
             echo json_encode(array(
@@ -74,9 +83,11 @@ else {
         $stmt->close();
 
 
+        $newsharetitle=$username+"s event: " + $sharetitle;
 
+        
         //add new event where the new user is shareuser
-        $stmt=$mysqli->prepare("INSERT into events(user_id, title, date, time, tags) values(?,?,?,?)");
+        $stmt=$mysqli->prepare("INSERT into events(user_id, title, date, time, tags) values(?,?,?,?,?)");
         if (!$stmt) {
             echo json_encode(array(
                 "success" => false,
@@ -84,7 +95,7 @@ else {
             ));
             exit;
         }
-        $stmt->bind_param('issss',$shareid,$sharetitle,$sharedate,$sharetime, $sharetag);
+        $stmt->bind_param('issss',$shareid,$newsharetitle,$sharedate,$sharetime, $sharetag);
         $stmt->execute();
         echo json_encode(array(
             "success" => true,

@@ -5,7 +5,7 @@ session_start();
 header("Content-Type: application/json"); 
 $json_str = file_get_contents('php://input');
 $json_obj = json_decode($json_str, true);
-$event_id=$json_obj["eventid"];
+$event_id=(int)$json_obj["eventid"];
 
 if(!isset($_SESSION['user_id'])){
     echo json_encode(array(

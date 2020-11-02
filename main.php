@@ -18,9 +18,8 @@ $token=$_SESSION['token'];
     <!-- jquery -->
     <link rel="stylesheet" type="text/css"
         href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script type="text/javascript"
-        src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 
 </head>
 
@@ -30,7 +29,7 @@ $token=$_SESSION['token'];
         <p>Login</p>
         <label for="username">Username: </label>
         <input type="text" id="username" name="username" placeholder="Username" required>
-        <label for="current-password">Password: </label>
+        <label for="password">Password: </label>
         <input type="password" id="password" name="password" placeholder="Password" required>
         <button name="login-btn" id="login-btn"> Log In </button>
     </div>
@@ -42,12 +41,13 @@ $token=$_SESSION['token'];
     <input type="password" id="new-password" name="new-password" placeholder="New Password" required>
     <input type="button" name="create-user" id="create-user" value="Create Account">
 
-    <div id="username">
+    <div id="loggedin">
         <p id="welcometext">
         </p>
         <button id="shareCalendar"> Share Calendar with: </button> <input type="text" id="sharedcal-user" name="sharedcal-user">
         <br><button name='logout-btn' id='logout-btn'> Log Out </button>
     </div>
+    
     <?php
         // if (isset($_SESSION['user_id'])) {
         //     // show logout button 
@@ -77,14 +77,24 @@ $token=$_SESSION['token'];
         // }
     ?>
 
-    <div id="monthyear">
-        <p id="month"></p>
-        <p id="year"></p>
-    </div>
+    
     <div id="buttons">
         <button id="prev-month-btn"> Previous Month </button>
+        <div id="monthyear">
+            <p id="month"></p>
+            <p id="year"> </p> 
+        </div> 
         <button id="next-month-btn"> Next Month</button>
     </div>
+    <br><br><br>
+    <div id="display">
+        <label> personal:<input name="displaytag" type="checkbox" id="personaldisplay" value="personal" checked/> </label>
+        <label> school:<input name="displaytag" type="checkbox" id="schooldisplay" value="school" checked/> </label>
+        <label> work:<input name="displaytag" type="checkbox" id="workdisplay" value="work" checked/> </label>
+        <label> untagged:<input name="displaytag" type="checkbox" id="otherdisplay" value="all" checked/> </label>
+
+    </div>
+    
     <table id="calendar">
         <tr>
             <th>Sun</th>
@@ -280,7 +290,7 @@ $token=$_SESSION['token'];
     <div id="addEventForm">
         <label for="event-title">Event Title: </label>
         <input type="text" id="event-title" name="event-title">
-        <label for="event-date">Event Date: </label>
+        <label for="date">Event Date: </label>
         <input type="date" id="date" name="date">
         <label for="time">Event Time: </label>
         <input type="time" id="time" name="time">
@@ -293,17 +303,17 @@ $token=$_SESSION['token'];
     <div id="event-details" title="Edit Event">
         <p id="event-description"></p>
         <label for="new-event-title">Event Title: </label>
-        <input type="text" id="new-event-title" name="new-event-title">
-        <label for="new-event-date">Event Date: </label>
-        <input type="date" id="new-date" name="new-date">
+        <input type="text" id="new-event-title" name="new-event-title"> <br>
+        <label for="new-date">Event Date: </label>
+        <input type="date" id="new-date" name="new-date"> <br>
         <label for="time">Event Time: </label>
-        <input type="time" id="new-time" name="new-time">
-        <label> personal:<input name="tag" type="radio" id="personal" value="personal"/> </label>
-        <label> school:<input name="tag" type="radio" id="school" value="school" /> </label>
-        <label> work:<input name="tag" type="radio" id="work" value="work" /> </label>
+        <input type="time" id="new-time" name="new-time"> <br>
+        <label> personal:<input name="new-tag" type="radio" id="new-personal" value="personal"/> </label>
+        <label> school:<input name="new-tag" type="radio" id="new-school" value="school" /> </label>
+        <label> work:<input name="new-tag" type="radio" id="new-work" value="work" /> </label> <br>
         <input type='hidden' id="editToken" value=""> 
         <button id="edit"> Edit Event</button> 
-        <button id="delete"> Delete Event</button>
+        <button id="delete"> Delete Event</button> <br>
         <button id="share"> Share Event with: </button> <input type="text" id="shared-user" name="shared-user">
     </div>
 
@@ -314,6 +324,12 @@ $token=$_SESSION['token'];
         document.getElementById("add").addEventListener("click", addEvent, false);
         document.getElementById("logout-btn").addEventListener("click", logoutAjax, false);
         document.getElementById("shareCalendar").addEventListener("click", shareCalendar, false);
+
+        document.getElementById('personaldisplay').addEventListener("change", updateCalendar, false);
+        document.getElementById('schooldisplay').addEventListener("change", updateCalendar, false);
+        document.getElementById('workdisplay').addEventListener("change", updateCalendar, false);
+        document.getElementById('otherdisplay').addEventListener("change", updateCalendar, false);
+
 
         //add event to server
         function addEvent(event) {
@@ -520,7 +536,7 @@ $token=$_SESSION['token'];
         };
 
         // For our purposes, we can keep the current month in a variable in the global scope
-        let currentMonth = new Month(2020, 9); // October 2020 (January = 0)
+        let currentMonth = new Month(2020, 10); // november 2020 (January = 0)
 
         //load calendar
         document.addEventListener("DOMContentLoaded", updateCalendar, false);
@@ -543,29 +559,29 @@ $token=$_SESSION['token'];
         function updateCalendar() {
             let monthTitle = "";
             if (currentMonth.month == 0) {
-                monthTitle = "January";
+                monthTitle = "January ";
             } else if (currentMonth.month == 1) {
-                monthTitle = "February";
+                monthTitle = "February ";
             } else if (currentMonth.month == 2) {
-                monthTitle = "March";
+                monthTitle = "March ";
             } else if (currentMonth.month == 3) {
-                monthTitle = "April";
+                monthTitle = "April ";
             } else if (currentMonth.month == 4) {
-                monthTitle = "May";
+                monthTitle = "May ";
             } else if (currentMonth.month == 5) {
-                monthTitle = "June";
+                monthTitle = "June ";
             } else if (currentMonth.month == 6) {
-                monthTitle = "July";
+                monthTitle = "July ";
             } else if (currentMonth.month == 7) {
-                monthTitle = "August";
+                monthTitle = "August ";
             } else if (currentMonth.month == 8) {
-                monthTitle = "September";
+                monthTitle = "September ";
             } else if (currentMonth.month == 9) {
-                monthTitle = "October";
+                monthTitle = "October ";
             } else if (currentMonth.month == 10) {
-                monthTitle = "November";
+                monthTitle = "November ";
             } else if (currentMonth.month == 11) {
-                monthTitle = "December";
+                monthTitle = "December ";
             }
 
             //let sessiontoken=document.getElementById('addToken').value;
@@ -599,7 +615,20 @@ $token=$_SESSION['token'];
                 }
             }
             //get events 
-            fetch("getevents.php")
+            
+            const personaldisplay = document.getElementById('personaldisplay').checked;
+            const schooldisplay =document.getElementById('schooldisplay').checked;
+            const workdisplay = document.getElementById('workdisplay').checked; 
+            const otherdisplay = document.getElementById('otherdisplay').checked;
+
+
+            const data = {"personal":personaldisplay, "school": schooldisplay, "work": workdisplay, "other": otherdisplay};
+            console.log(data);
+            fetch("getevents.php",{
+                method: 'POST',
+                body: JSON.stringify(data),
+                headers: { 'content-type': 'application/json' }
+            })
                 .then(response => response.json())
                 .then(data => {
                     if (data.loggedin != false) {
@@ -618,8 +647,9 @@ $token=$_SESSION['token'];
             
 
             let jsonData = JSON.parse(JSON.stringify(response));
-            console.log(jsonData[0].username);
+            //console.log(jsonData[0].username);
             document.getElementById('welcometext').innerHTML = jsonData[0].username+"'s Calendar";
+            document.getElementById('display').style.visibility = 'visible'; 
             let calendar_days = document.getElementsByClassName("day");
             for (let i = 0; i < calendar_days.length; i++) {
                 let calendar_date = calendar_days[i].id;
@@ -629,11 +659,19 @@ $token=$_SESSION['token'];
                         if (document.getElementById(eventID) == null) {
                             //create div to hold event
                             let event = document.createElement('div');
-                            //show event title and event time
-                            let eventText = document.createTextNode(jsonData[n].title + " at " + jsonData[n].time);
+                            let eventText=" ";
+                            if (jsonData[n].username == 'shared'){
+                                //shared calendar event
+                                eventText = document.createTextNode("shared event: "+jsonData[n].title + " at " + jsonData[n].time);
+                            }
+                            else {
+                                //show event title and event time
+                                eventText = document.createTextNode(jsonData[n].title + " at " + jsonData[n].time);
+                            }
                             event.appendChild(eventText);
                             //set id of this div to the eventID
                             event.id = eventID;
+                            event.setAttribute('class',jsonData[n].tags);
                             //append this div to the div class events 
                             document.getElementById(calendar_date).children[1].appendChild(event);
                             //show dialogue box
@@ -651,7 +689,7 @@ $token=$_SESSION['token'];
                             //hidden token to addevent form 
                             document.getElementById('addToken').value = jsonData[n].token;
                             //hidden token to edit event details form 
-                            document.getElementById('editToken').value = jsonData[n].token;
+                            //document.getElementById('editToken').value = jsonData[n].token;
 
                         }
 
@@ -677,14 +715,14 @@ $token=$_SESSION['token'];
                 const ntime = document.getElementById("new-time").value;
                 const ndate = document.getElementById("new-date").value;
                 const token = document.getElementById("token"+eventid).value;
+                let tags = document.getElementsByName('new-tag');
                 let checkedtag =null;
                 for (let i=0; i<tags.length; i++){
                     if (tags[i].checked){
-                        checkedtag = tags[i].value;
+                      checkedtag = tags[i].value;
                     }
                 }
-                //console.log(checkedtag);
-                //console.log(token);
+
                 const data = { 'new-event-title': ntitle, 'new-date': ndate, 'new-time': ntime, 'new-tag':checkedtag, 'eventid': eventid, 'token': token };
                 fetch('editevent.php', {
                     method: 'POST',
@@ -719,8 +757,8 @@ $token=$_SESSION['token'];
                 })
                 .then(response => response.json())
                 .then(data => {
-                    updateCalendar();
                     alert(data.success ? "Event deleted" : `Could not be deleted: ${data.message}`);
+                    updateCalendar();
                 })
                 .catch(err => console.error(err));
                 $("#event-details").dialog('close');
@@ -735,12 +773,16 @@ $token=$_SESSION['token'];
                     method: 'POST',
                     body: JSON.stringify(data),
                     headers: { 'content-type': 'application/json' }
-                })
+                }) 
                 .then(response => response.json())
                 .then(data => {
                     if (data.exists == false) {
                         alert("This user does not exist. Please choose another");
-                    } else {
+                    } 
+                    // if (data.sameuser == true) {
+                    //     alert("you cannot share with yourself");
+                    // }
+                    else {
                         updateCalendar();
                         //console.log(data);
                         alert(data.success ? "Event shared" : `Could not be shared: ${data.message}`);
@@ -768,6 +810,8 @@ $token=$_SESSION['token'];
                     console.log(data);
                     if (data.exists == false) {
                         alert("This user does not exist. Please choose another");
+                    } else if (data.sameuser == true) {
+                        alert("you cannot share with yourself");
                     } else {
                         console.log(data);
                         updateCalendar();

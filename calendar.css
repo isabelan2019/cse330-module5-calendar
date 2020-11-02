@@ -13,6 +13,33 @@ th{
 #event-details{ 
     display:none;
 }
-/* #logout-btn{
+#buttons {
+    /* position: fixed;
+    top: 50%;
+    left: 50%;
+    margin-top: -50px;
+    margin-left: -100px; */
+    /* padding: 20px; */
+    border:30px;
+
+}
+#buttons * {
+    float: left;
+    display: flex;
+    align-items: center;
+}
+#monthyear {
+    margin: 10px 10px;
+}
+#year {
+    padding-left: 5px;
+}
+#prev-month-btn{
+    margin-top:25px;
+}
+#next-month-btn {
+    margin-top:25px;
+}
+#display{
     visibility:hidden;
-} */
+}
