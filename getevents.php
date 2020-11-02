@@ -19,14 +19,17 @@ $token = $_SESSION['token'];
 $json_str = file_get_contents('php://input');
 $json_obj = json_decode($json_str, true);
 $personal = $json_obj['personal'];
-$school = $json_obj[(string)'school'];
-$work = $json_obj[(string)'work'];
-$other = $json_obj[(string)'other'];
+$school = $json_obj['school'];
+$work = $json_obj['work'];
+$other = $json_obj['other'];
 
 $eventsArray=array();
 //events are added through each tag. goes through personal, then school, then work, then null tags. 
 //shared events are not sorted
-
+array_push($eventsArray,array(
+    'user'=>$_SESSION['username'],
+    'token'=>$_SESSION['token']
+));
 if ($personal == true) {
 
     $stmt = $mysqli->prepare("SELECT event_id, title, date, time, tags FROM events where user_id=? and tags='personal'");
@@ -50,11 +53,13 @@ if ($personal == true) {
             "date"=>array($personaldate),
             "time"=>array($personaltime),
             "tags"=>array($personaltags),
-            "token"=>$_SESSION['token'],
-            'username'=>$_SESSION['username']
+           // "token"=>$_SESSION['token'],
+            'username'=>$_SESSION['username'],
+         //   'group_id'=>$personalgroup_id
         ));
     }
     $stmt->close();
+
 }
 if ($school == true) {
 
@@ -79,11 +84,13 @@ if ($school == true) {
             "date"=>array($schooldate),
             "time"=>array($schooltime),
             "tags"=>array($schooltags),
-            "token"=>$_SESSION['token'],
-            'username'=>$_SESSION['username']
+          //  "token"=>$_SESSION['token'],
+          'username'=>$_SESSION['username'],
+         // 'group_id'=>$schoolgroup_id
         ));
     }
     $stmt->close();
+
 }
 
 if ($work == true) {
@@ -109,11 +116,13 @@ if ($work == true) {
             "date"=>array($workdate),
             "time"=>array($worktime),
             "tags"=>array($worktags),
-            "token"=>$_SESSION['token'],
-            'username'=>$_SESSION['username']
+           // "token"=>$_SESSION['token'],
+            'username'=>$_SESSION['username'],
+           // 'group_id'=>$workgroup_id
         ));
     }
     $stmt->close();
+
 }
 
 
@@ -139,12 +148,14 @@ if ($other == true){
             "date"=>array($date),
             "time"=>array($time),
             "tags"=>array($tags),
-            "token"=>$_SESSION['token'],
-            'username'=>$_SESSION['username']
+         //   "token"=>$_SESSION['token'],
+            'username'=>$_SESSION['username'],
+           // 'group_id'=>$group_id
         ));
     }
     //echo json_encode($eventsArray);
     $stmt->close();
+
 
 }
 
@@ -198,15 +209,13 @@ while($stmt->fetch()){
         "date"=>array($shareddate),
         "time"=>array($sharedtime),
         'tags'=>array($sharedtags),
-        "token"=>$_SESSION['token'],
+       // "token"=>$_SESSION['token'],
         'username'=>'shared'
     ));
 }
+
 echo json_encode($eventsArray);
 $stmt->close();
-
-
-
 
 
 }
