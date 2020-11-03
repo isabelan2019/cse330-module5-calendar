@@ -15,13 +15,13 @@ else{
 
 $user_id= (int)$_SESSION['user_id'];
 $username = (string)$_SESSION['username'];
-$token = $_SESSION['token'];
+$token = (string)$_SESSION['token'];
 $json_str = file_get_contents('php://input');
 $json_obj = json_decode($json_str, true);
-$personal = $json_obj['personal'];
-$school = $json_obj['school'];
-$work = $json_obj['work'];
-$other = $json_obj['other'];
+$personal = (bool)$json_obj['personal'];
+$school = (bool)$json_obj['school'];
+$work = (bool)$json_obj['work'];
+$other = (bool)$json_obj['other'];
 
 $eventsArray=array();
 //events are added through each tag. goes through personal, then school, then work, then null tags. 
