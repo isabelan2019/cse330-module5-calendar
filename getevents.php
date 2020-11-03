@@ -27,7 +27,7 @@ $eventsArray=array();
 //events are added through each tag. goes through personal, then school, then work, then null tags. 
 //shared events are not sorted
 array_push($eventsArray,array(
-    'user'=>$_SESSION['username'],
+    'user'=>(string)$_SESSION['username'],
     'token'=>$_SESSION['token']
 ));
 if ($personal == true) {

@@ -1,7 +1,11 @@
+body {
+    background-color: #b9d5fd ;
+    color: #274684;
+}
 td{
     width: 14%;
     height:15%;
-    border: 2px solid black;
+    border: 2px solid #274684;
 }
 table{
     width: 100%;
@@ -23,7 +27,7 @@ th{
     text-align: center;
 }
 #loginform, #createuserform {
-    border: 1px solid black;
+    border: 1px solid #071739;
 }
 #loggedin{
     /* visibility:hidden; */
@@ -32,6 +36,9 @@ th{
     justify-content: center;
     align-items: center;
     text-align: center;
+}
+#welcometext {
+    font-size: 20px;
 }
 #event-details{ 
     display:none;
@@ -46,6 +53,7 @@ th{
 }
 #monthyear {
     margin: 10px 10px;
+    font-size: 30px;
 }
 #year {
     padding-left: 5px;

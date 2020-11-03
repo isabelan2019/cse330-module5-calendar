@@ -376,6 +376,12 @@ $token=$_SESSION['token'];
             document.getElementById('event-title').value = "";
             document.getElementById('date').value = "";
             document.getElementById('time').value = "";
+            //let tags = document.getElementsByName('tag');
+            //let checkedtag =null;
+            for (let i=0; i<tags.length; i++){
+                tags[i].checked = false;
+
+            }
         }
 
         //log in
@@ -727,10 +733,9 @@ $token=$_SESSION['token'];
         document.getElementById("share").addEventListener("click", shareEvent, false);
         function getEventID(event){
             current_event_id=event.target.id;
-            eventName = event.target.getAttribute(name);
-            console.log(current_event_id);
-            console.log(eventName);
-
+            eventName = event.target.getAttribute('name');
+            // console.log(current_event_id);
+            // console.log(eventName);
             //showDialog();
             if (eventName == "shared") {
                 //console.log(event.target.name);
@@ -738,7 +743,6 @@ $token=$_SESSION['token'];
             }
             else {               
                 showDialog();
-                
             }
         }
         function showDialog(event) {
@@ -784,6 +788,9 @@ $token=$_SESSION['token'];
                 document.getElementById('new-event-title').value = "";
                 document.getElementById('new-date').value = "";
                 document.getElementById('new-time').value = "";
+                for (let i=0; i<tags.length; i++){
+                    tags[i].checked = false;
+                }
                 $("#event-details").dialog('close');
             }
 
@@ -823,9 +830,9 @@ $token=$_SESSION['token'];
                     if (data.exists == false) {
                         alert("This user does not exist. Please choose another");
                     } 
-                    // if (data.sameuser == true) {
-                    //     alert("you cannot share with yourself");
-                    // }
+                    if (data.sameuser == true) {
+                        alert("you cannot share with yourself");
+                    }
                     else {
                         updateCalendar();
                         //console.log(data);
@@ -857,9 +864,9 @@ $token=$_SESSION['token'];
                     if (data.exists == false) {
                         alert("This user does not exist. Please choose another");
                     } 
-                    //else if (data.sameuser == true) {
-                    //     alert("you cannot share with yourself");
-                    // } 
+                    else if (data.sameuser == true) {
+                        alert("you cannot share with yourself");
+                    } 
                     else {
                         console.log(data);
                         updateCalendar();
