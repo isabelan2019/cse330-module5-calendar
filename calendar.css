@@ -2,11 +2,13 @@
 body {
     background-color: #b9d5fd ;
     color: lightslategrey;
+    margin-bottom: 20px;
 }
 td{
     width: 14%;
     height:15%;
     border: 2px solid lightslategrey;
+    background-color: #f1f6f9;
 }
 table{
     width: 100%;
@@ -32,8 +34,7 @@ th{
     border: 1px solid lightslategrey;
 }
 #loggedin{
-    /* visibility:hidden; */
-    /* display: grid; */
+ 
     display:none;
     justify-content: center;
     align-items: center;
@@ -62,11 +63,23 @@ th{
 }
 
 #display{
-    /* visibility:hidden; */
-    /* display: flex; */
     display:none;
     justify-content: center;
     align-items: center;
 }
 
-
+input{
+    background-color: #f1f6f9;
+}
+button{
+    background-color: #f1f6f9;
+    border-radius:20px;
+    color:lightslategrey;
+}
+#addEventForm{
+    margin-top: 20px;
+    
+}
+#instructions{
+    display:none;
+}

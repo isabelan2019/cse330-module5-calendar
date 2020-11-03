@@ -6,11 +6,11 @@ header("Content-Type: application/json");
 $json_str = file_get_contents('php://input');
 $json_obj = json_decode($json_str, true);
 
-$new_title = $json_obj[(string)'new-event-title'] ;
-$new_date = $json_obj[(string) "new-date"];
-$new_time = $json_obj[(string) "new-time"];
-$event_id=$json_obj["eventid"];
-$tags=$json_obj["new-tag"];
+$new_title = (string)$json_obj['new-event-title'] ;
+$new_date = (string)$json_obj[ "new-date"];
+$new_time = (string)$json_obj[ "new-time"];
+$event_id=(int)$json_obj["eventid"];
+$tags=(string)$json_obj["new-tag"];
 $get_group_id=null;
 
 
