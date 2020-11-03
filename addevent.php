@@ -12,7 +12,7 @@ $tag=(string)$json_obj['tag'];
 
 if(!isset($_SESSION['user_id'])){
     echo json_encode(array(
-        "loggedin"=>false
+        "loggedin"=>htmlentities((bool)false)
     ));
     exit;
 }
@@ -26,8 +26,8 @@ else{
     }
     if(empty($title) || empty($time) || empty($date)){
     echo json_encode(array(
-        "success"=>false,
-        "message"=>"empty inputs"
+        "success"=>htmlentities((bool)false),
+        "message"=>htmlentities((string)"empty inputs")
     ));
     exit;
    }
@@ -36,15 +36,15 @@ else{
     $stmt=$mysqli->prepare("INSERT into events(user_id, title, date, time, tags) values(?,?,?,?,?)");
     if (!$stmt) {
         echo json_encode(array(
-            "success" => false,
-            "message" => "ERROR inserting into database"
+            "success" => htmlentities((bool)false),
+            "message" => htmlentities((string)"ERROR inserting into database")
         ));
         exit;
     }
     $stmt->bind_param('issss',$user_id,$title,$date,$time, $tag);
     $stmt->execute();
     echo json_encode(array(
-        "success" => true
+        "success" => htmlentities((bool)true)
     ));
     $stmt->close();
     }

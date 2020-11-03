@@ -11,8 +11,8 @@ $newuser = (string) $json_obj['new-username'];
 
 if( !preg_match('/^[\w_\-]+$/', $newuser) ){
 	echo json_encode(array(
-        "invalid"=> true,
-        "message" => "Invalid characters"
+        "invalid"=> htmlentities((bool)true),
+        "message" => htmlentities((string)"Invalid characters")
     ));
 	exit;
 }
@@ -27,8 +27,8 @@ $stmt->bind_param('s', $newuser);
 
 if(!$stmt){
     echo json_encode(array(
-        "success" => false,
-        "message" => "ERROR checking database"
+        "success" => htmlentities((bool)false),
+        "message" => htmlentities((string)"ERROR checking database")
     ));
     exit;
 }
@@ -42,7 +42,7 @@ $stmt->fetch();
 //if username already exists
 if ($cnt>0) {
     echo json_encode(array(
-        "exists" => true,
+        "exists" => htmlentities((bool)true),
     ));
     exit;
 }
@@ -53,8 +53,8 @@ $stmt = $mysqli->prepare("insert into users (username, hashed_password) values (
 
 if (!$stmt) {
     echo json_encode(array(
-        "success" => false,
-        "message" => "ERROR inserting into database"
+        "success" => htmlentities((bool)false),
+        "message" => htmlentities((string)"ERROR inserting into database")
     ));
     exit;
 }
@@ -63,7 +63,7 @@ $stmt->bind_param('ss', $newuser, $newpassword);
 $stmt->execute();
 
 echo json_encode(array(
-    "success" => true
+    "success" => htmlentities((bool)true)
 ));
 $stmt->close();
 

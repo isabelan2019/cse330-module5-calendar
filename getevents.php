@@ -6,7 +6,7 @@ header("Content-Type: application/json");
 
 if(isset($_SESSION['user_id'])==false){
     echo json_encode(array(
-        "loggedin"=>false
+        "loggedin"=> htmlentities((bool) false)
     ));
     exit;
 }
@@ -28,7 +28,7 @@ $eventsArray=array();
 //shared events are not sorted
 array_push($eventsArray,array(
     'user'=>(string)$_SESSION['username'],
-    'token'=>$_SESSION['token']
+    'token'=>(string)$_SESSION['token']
 ));
 if ($personal == true) {
 
@@ -36,8 +36,8 @@ if ($personal == true) {
     $stmt->bind_param('i',$user_id);
     if(!$stmt){
         echo json_encode(array(
-            "success" => false,
-            "message" => "ERROR checking database"
+            "success" => (bool) false,
+            "message" => htmlentities((string)"ERROR checking database")
         ));
         exit;
     }
@@ -48,13 +48,13 @@ if ($personal == true) {
     $stmt->bind_result($personal_id, $personaltitle, $personaldate,$personaltime, $personaltags);
     while($stmt->fetch()){   
         array_push($eventsArray, array(
-            "event_id"=>array($personal_id),
-            "title"=>array($personaltitle),
-            "date"=>array($personaldate),
-            "time"=>array($personaltime),
-            "tags"=>array($personaltags),
+            "event_id"=>array(htmlentities($personal_id)),
+            "title"=>array(htmlentities($personaltitle)),
+            "date"=>array(htmlentities($personaldate)),
+            "time"=>array(htmlentities($personaltime)),
+            "tags"=>array(htmlentities($personaltags)),
            // "token"=>$_SESSION['token'],
-            'username'=>$_SESSION['username'],
+            'username'=>htmlentities($_SESSION['username']),
          //   'group_id'=>$personalgroup_id
         ));
     }
@@ -67,8 +67,8 @@ if ($school == true) {
     $stmt->bind_param('i',$user_id);
     if(!$stmt){
         echo json_encode(array(
-            "success" => false,
-            "message" => "ERROR checking database"
+            "success" => (bool) false,
+            "message" => htmlentities((string)"ERROR checking database")
         ));
         exit;
     }
@@ -79,13 +79,13 @@ if ($school == true) {
     $stmt->bind_result($school_id, $schooltitle, $schooldate,$schooltime, $schooltags);
     while($stmt->fetch()){   
         array_push($eventsArray, array(
-            "event_id"=>array($school_id),
-            "title"=>array($schooltitle),
-            "date"=>array($schooldate),
-            "time"=>array($schooltime),
-            "tags"=>array($schooltags),
+            "event_id"=>array(htmlentities($school_id)),
+            "title"=>array(htmlentities($schooltitle)),
+            "date"=>array(htmlentities($schooldate)),
+            "time"=>array(htmlentities($schooltime)),
+            "tags"=>array(htmlentities($schooltags)),
           //  "token"=>$_SESSION['token'],
-          'username'=>$_SESSION['username'],
+          'username'=>htmlentities((string)$_SESSION['username']),
          // 'group_id'=>$schoolgroup_id
         ));
     }
@@ -99,8 +99,8 @@ if ($work == true) {
     $stmt->bind_param('i',$user_id);
     if(!$stmt){
         echo json_encode(array(
-            "success" => false,
-            "message" => "ERROR checking database"
+            "success" => htmlentities( (bool)false),
+            "message" => htmlentities((string)"ERROR checking database")
         ));
         exit;
     }
@@ -111,13 +111,13 @@ if ($work == true) {
     $stmt->bind_result($work_id, $worktitle, $workdate,$worktime, $worktags);
     while($stmt->fetch()){   
         array_push($eventsArray, array(
-            "event_id"=>array($work_id),
-            "title"=>array($worktitle),
-            "date"=>array($workdate),
-            "time"=>array($worktime),
-            "tags"=>array($worktags),
+            "event_id"=>array(htmlentities($work_id)),
+            "title"=>array(htmlentities($worktitle)),
+            "date"=>array(htmlentities($workdate)),
+            "time"=>array(htmlentities($worktime)),
+            "tags"=>array(htmlentities($worktags)),
            // "token"=>$_SESSION['token'],
-            'username'=>$_SESSION['username'],
+            'username'=>htmlentities((string)$_SESSION['username']),
            // 'group_id'=>$workgroup_id
         ));
     }
@@ -131,8 +131,8 @@ if ($other == true){
     $stmt->bind_param('i',$user_id);
     if(!$stmt){
         echo json_encode(array(
-            "success" => false,
-            "message" => "ERROR checking database"
+            "success" => htmlentities((bool)false),
+            "message" => htmlentities((string)"ERROR checking database")
         ));
         exit;
     }
@@ -143,13 +143,13 @@ if ($other == true){
     $stmt->bind_result($event_id, $title, $date,$time, $tags);
     while($stmt->fetch()){   
         array_push($eventsArray, array(
-            "event_id"=>array($event_id),
-            "title"=>array($title),
-            "date"=>array($date),
-            "time"=>array($time),
-            "tags"=>array($tags),
+            "event_id"=>array(htmlentities($event_id)),
+            "title"=>array(htmlentities($title)),
+            "date"=>array(htmlentities($date)),
+            "time"=>array(htmlentities($time)),
+            "tags"=>array(htmlentities($tags)),
          //   "token"=>$_SESSION['token'],
-            'username'=>$_SESSION['username'],
+            'username'=>htmlentities((string)$_SESSION['username']),
            // 'group_id'=>$group_id
         ));
     }
@@ -167,8 +167,8 @@ $stmt = $mysqli->prepare("SELECT COUNT(*), sender_id from shares where receiver_
 $stmt->bind_param('i', $user_id);
 if(!$stmt){
     echo json_encode(array(
-        "success" => false,
-        "message" => "ERROR checking database"
+        "success" => htmlentities((bool) false),
+        "message" => htmlentities((string)"ERROR checking database")
     ));
     exit;
 }
@@ -192,8 +192,8 @@ $stmt = $mysqli->prepare("SELECT event_id, title, date, time, tags FROM events w
 $stmt->bind_param('i',$sender_id);
 if(!$stmt){
     echo json_encode(array(
-        "success" => false,
-        "message" => "ERROR checking database"
+        "success" => htmlentities((bool)false),
+        "message" => htmlentities("ERROR checking database")
     ));
     exit;
 }
@@ -204,19 +204,18 @@ $stmt->execute();
 $stmt->bind_result($sharedevent_id, $sharedtitle, $shareddate,$sharedtime, $sharedtags);
 while($stmt->fetch()){   
     array_push($eventsArray, array(
-        "event_id"=>array($sharedevent_id),
-        "title"=>array($sharedtitle),
-        "date"=>array($shareddate),
-        "time"=>array($sharedtime),
-        'tags'=>array($sharedtags),
+        "event_id"=>array(htmlentities($sharedevent_id)),
+        "title"=>array(htmlentities($sharedtitle)),
+        "date"=>array(htmlentities($shareddate)),
+        "time"=>array(htmlentities($sharedtime)),
+        'tags'=>array(htmlentities($sharedtags)),
        // "token"=>$_SESSION['token'],
-        'username'=>'shared'
+        'username'=>htmlentities('shared')
     ));
 }
 
 echo json_encode($eventsArray);
 $stmt->close();
-
 
 }
 
