@@ -97,7 +97,7 @@ $token=$_SESSION['token'];
         <label> untagged:<input name="displaytag" type="checkbox" id="otherdisplay" value="all" checked/> </label>
     </div>
 
-    <div id="instructions" title="Instructions">
+    <div id="instructions" class="instructions" title="Instructions">
         <p> Welcome to your calendar! You may add events to your calendar by scrolling to the bottom. For each event, you have the choice of tagging an event with
             categories of personal, school, or work. You may click on your events on the calendar to edit or delete them. When you edit them, you will have to reenter
             all information again. You may also create group events by inviting other registered users to your event after it has been made, and it will appear on recipients' calendars.
@@ -341,7 +341,6 @@ $token=$_SESSION['token'];
         document.getElementById('schooldisplay').addEventListener("change", updateCalendar, false);
         document.getElementById('workdisplay').addEventListener("change", updateCalendar, false);
         document.getElementById('otherdisplay').addEventListener("change", updateCalendar, false);
-        document.getElementById('instructions-btn').addEventListener("click",function(){$("#instructions").dialog({width:500})},false);
         //set global variable
         let current_event_id=null;
 
@@ -352,7 +351,7 @@ $token=$_SESSION['token'];
             const time = document.getElementById("time").value;
             const date = document.getElementById("date").value;
             const addToken = document.getElementById("addToken").value;
-            console.log(addToken);
+            console.log(time);
             let tags = document.getElementsByName('tag');
             let checkedtag =null;
             for (let i=0; i<tags.length; i++){
@@ -464,6 +463,7 @@ $token=$_SESSION['token'];
             document.getElementById('welcometext').innerText =" ";
             document.getElementById('display').style.display = 'none'; 
             document.getElementById('loggedin').style.display = 'none'; 
+            document.getElementById('instructions').style.display = 'none'; 
             document.getElementById('loginform').style.display = 'block'; 
             document.getElementById('createuserform').style.display = 'block'; 
 
@@ -676,9 +676,12 @@ $token=$_SESSION['token'];
             document.getElementById('display').style.display = 'flex'; 
             //document.getElementById('loggedin').style.visibility = 'visible'; 
             document.getElementById('loggedin').style.display = 'grid'; 
-
             document.getElementById('loginform').style.display = 'none'; 
             document.getElementById('createuserform').style.display = 'none'; 
+            document.getElementById('instructions-btn').addEventListener("click",function(){$("#instructions").dialog({width:500})},false);
+
+
+
             document.getElementById('addToken').value = jsonData[0].token;
             document.getElementById('editToken').value = jsonData[0].token;
             document.getElementById('deleteToken').value = jsonData[0].token;

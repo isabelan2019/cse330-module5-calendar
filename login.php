@@ -17,7 +17,7 @@ $stmt->bind_param('s',$username);
 
 if( !preg_match('/^[\w_\-]+$/', $username) ){
 	echo json_encode(array(
-        "invalid" => true
+        "invalid" => htmlentities((bool)true)
     ));
 	exit;
 }
@@ -41,15 +41,15 @@ if($cnt==1 && password_verify($pwd_guess, $pwd_hash)){
     $_SESSION['token'] = bin2hex(random_bytes(32));
     
     echo json_encode(array(
-        "success" => true,
-        "token"=> $_SESSION['token'],
-        'username'=>$username
+        "success" => htmlentities((bool) true),
+        "token"=> htmlentities((string)$_SESSION['token']),
+        'username'=>htmlentities($username)
     ));
     exit;
 } else {
     echo json_encode(array(
-        "success" => false,
-        "message" => "Incorrect Username or Password"
+        "success" => htmlentities((bool)false),
+        "message" => htmlentities((string)"Incorrect Username or Password")
     ));
     exit;
 }
