@@ -32,7 +32,7 @@ array_push($eventsArray,array(
 ));
 if ($personal == true) {
 
-    $stmt = $mysqli->prepare("SELECT event_id, title, date, time, tags FROM events where user_id=? and tags='personal'");
+    $stmt = $mysqli->prepare("SELECT event_id, title, date, time, tags,group_id FROM events where user_id=? and tags='personal'");
     $stmt->bind_param('i',$user_id);
     if(!$stmt){
         echo json_encode(array(
@@ -45,7 +45,7 @@ if ($personal == true) {
     $stmt->execute();
 
     //bind results
-    $stmt->bind_result($personal_id, $personaltitle, $personaldate,$personaltime, $personaltags);
+    $stmt->bind_result($personal_id, $personaltitle, $personaldate,$personaltime, $personaltags,$personalgroup_id);
     while($stmt->fetch()){   
         array_push($eventsArray, array(
             "event_id"=>array($personal_id),
@@ -55,7 +55,7 @@ if ($personal == true) {
             "tags"=>array($personaltags),
            // "token"=>$_SESSION['token'],
             'username'=>$_SESSION['username'],
-         //   'group_id'=>$personalgroup_id
+            'group_id'=>$personalgroup_id
         ));
     }
     $stmt->close();
@@ -63,7 +63,7 @@ if ($personal == true) {
 }
 if ($school == true) {
 
-    $stmt = $mysqli->prepare("SELECT event_id, title, date, time, tags FROM events where user_id=? and tags='school'");
+    $stmt = $mysqli->prepare("SELECT event_id, title, date, time, tags,group_id FROM events where user_id=? and tags='school'");
     $stmt->bind_param('i',$user_id);
     if(!$stmt){
         echo json_encode(array(
@@ -76,7 +76,7 @@ if ($school == true) {
     $stmt->execute();
 
     //bind results
-    $stmt->bind_result($school_id, $schooltitle, $schooldate,$schooltime, $schooltags);
+    $stmt->bind_result($school_id, $schooltitle, $schooldate,$schooltime, $schooltags,$schoolgroup_id);
     while($stmt->fetch()){   
         array_push($eventsArray, array(
             "event_id"=>array($school_id),
@@ -86,7 +86,7 @@ if ($school == true) {
             "tags"=>array($schooltags),
           //  "token"=>$_SESSION['token'],
           'username'=>$_SESSION['username'],
-         // 'group_id'=>$schoolgroup_id
+          'group_id'=>$schoolgroup_id
         ));
     }
     $stmt->close();
@@ -95,7 +95,7 @@ if ($school == true) {
 
 if ($work == true) {
 
-    $stmt = $mysqli->prepare("SELECT event_id, title, date, time, tags FROM events where user_id=? and tags='work'");
+    $stmt = $mysqli->prepare("SELECT event_id, title, date, time, tags,group_id FROM events where user_id=? and tags='work'");
     $stmt->bind_param('i',$user_id);
     if(!$stmt){
         echo json_encode(array(
@@ -108,7 +108,7 @@ if ($work == true) {
     $stmt->execute();
 
     //bind results
-    $stmt->bind_result($work_id, $worktitle, $workdate,$worktime, $worktags);
+    $stmt->bind_result($work_id, $worktitle, $workdate,$worktime, $worktags,$workgroup_id);
     while($stmt->fetch()){   
         array_push($eventsArray, array(
             "event_id"=>array($work_id),
@@ -118,7 +118,7 @@ if ($work == true) {
             "tags"=>array($worktags),
            // "token"=>$_SESSION['token'],
             'username'=>$_SESSION['username'],
-           // 'group_id'=>$workgroup_id
+            'group_id'=>$workgroup_id
         ));
     }
     $stmt->close();
@@ -127,7 +127,7 @@ if ($work == true) {
 
 
 if ($other == true){
-    $stmt = $mysqli->prepare("SELECT event_id, title, date, time, tags FROM events where user_id=? and tags is NULL");
+    $stmt = $mysqli->prepare("SELECT event_id, title, date, time, tags,group_id FROM events where user_id=? and tags is NULL");
     $stmt->bind_param('i',$user_id);
     if(!$stmt){
         echo json_encode(array(
@@ -140,7 +140,7 @@ if ($other == true){
     $stmt->execute();
 
     //bind results
-    $stmt->bind_result($event_id, $title, $date,$time, $tags);
+    $stmt->bind_result($event_id, $title, $date,$time, $tags,$group_id);
     while($stmt->fetch()){   
         array_push($eventsArray, array(
             "event_id"=>array($event_id),
@@ -150,7 +150,7 @@ if ($other == true){
             "tags"=>array($tags),
          //   "token"=>$_SESSION['token'],
             'username'=>$_SESSION['username'],
-           // 'group_id'=>$group_id
+            'group_id'=>$group_id
         ));
     }
     //echo json_encode($eventsArray);
@@ -160,7 +160,7 @@ if ($other == true){
 }
 
 
-
+//FOR SHARE CALENDAR FUNCTIONALITY
 //check shares table 
 $stmt = $mysqli->prepare("SELECT COUNT(*), sender_id from shares where receiver_id=?");
 
@@ -187,6 +187,7 @@ if (!$cnt>0) {
 $stmt->close();
 
 
+
 //gets shared calendars 
 $stmt = $mysqli->prepare("SELECT event_id, title, date, time, tags FROM events where user_id=?");
 $stmt->bind_param('i',$sender_id);
@@ -209,7 +210,6 @@ while($stmt->fetch()){
         "date"=>array($shareddate),
         "time"=>array($sharedtime),
         'tags'=>array($sharedtags),
-       // "token"=>$_SESSION['token'],
         'username'=>'shared'
     ));
 }
