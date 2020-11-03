@@ -1,11 +1,11 @@
 body {
     background-color: #b9d5fd ;
-    color: #274684;
+    color: lightslategrey;
 }
 td{
     width: 14%;
     height:15%;
-    border: 2px solid #274684;
+    border: 2px solid lightslategrey;
 }
 table{
     width: 100%;
@@ -21,13 +21,14 @@ th{
 }
 #loggedout *{
     margin: 5px 5px;
+    font-weight: bold;
     
 }
 #loggedout p {
     text-align: center;
 }
 #loginform, #createuserform {
-    border: 1px solid #071739;
+    border: 1px solid lightslategrey;
 }
 #loggedin{
     /* visibility:hidden; */
