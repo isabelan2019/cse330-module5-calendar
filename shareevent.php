@@ -95,9 +95,9 @@ else {
         }
         $stmt->bind_param('ii',$eventid,$eventid);
         $stmt->execute();
-        echo json_encode(array(
-            "success" => true
-        ));
+        // echo json_encode(array(
+        //     "success" => true
+        // ));
         $stmt->close();
         
 

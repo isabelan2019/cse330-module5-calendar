@@ -10,10 +10,25 @@ table{
 th{
     height: 50px;
 }
+#loggedout {
+    display:flex;
+    justify-content: center;
+    align-items: center;
+}
+#loggedout *{
+    margin: 5px 5px;
+    
+}
+#loggedout p {
+    text-align: center;
+}
+#loginform, #createuserform {
+    border: 1px solid black;
+}
 #loggedin{
     /* visibility:hidden; */
-    display: grid;
-    /* display:none; */
+    /* display: grid; */
+    display:none;
     justify-content: center;
     align-items: center;
     text-align: center;
@@ -38,8 +53,8 @@ th{
 
 #display{
     /* visibility:hidden; */
-    display: flex;
-    /* display:none; */
+    /* display: flex; */
+    display:none;
     justify-content: center;
     align-items: center;
 }

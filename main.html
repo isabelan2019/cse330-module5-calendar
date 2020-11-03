@@ -24,23 +24,25 @@ $token=$_SESSION['token'];
 </head>
 
 <body>
+    <div id='loggedout'>
 
-    <div id="loginform">
-        <p>Login</p>
-        <label for="username">Username: </label>
-        <input type="text" id="username" name="username" placeholder="Username" required>
-        <label for="password">Password: </label>
-        <input type="password" id="password" name="password" placeholder="Password" required>
-        <button name="login-btn" id="login-btn"> Log In </button>
-    </div>
+        <div id="loginform">
+            <p>Login</p>
+            <label for="username">Username: </label>
+            <input type="text" id="username" name="username" placeholder="Username" required>
+            <br><br><label for="password">Password: </label>
+            <input type="password" id="password" name="password" placeholder="Password" required>
+            <button name="login-btn" id="login-btn"> Log In </button>
+        </div>
 
-    <div id="createuserform"> 
-    <p>New User? Register Below!</p>
-    <label for="new-username">New Username: </label>
-    <input type="text" id="new-username" name="new-username" placeholder="New Username" required>
-    <label for="new-password">New Password: </label>
-    <input type="password" id="new-password" name="new-password" placeholder="New Password" required>
-    <input type="button" name="create-user" id="create-user" value="Create Account">
+        <div id="createuserform"> 
+        <p>New User? Register Below!</p>
+        <label for="new-username">New Username: </label>
+        <input type="text" id="new-username" name="new-username" placeholder="New Username" required>
+        <br><br><label for="new-password">New Password: </label>
+        <input type="password" id="new-password" name="new-password" placeholder="New Password" required>
+        <input type="button" name="create-user" id="create-user" value="Create Account">
+        </div>
     </div>
 
     <div id="loggedin">
@@ -431,10 +433,11 @@ $token=$_SESSION['token'];
                         for (let t in eventTokens) {
                             document.getElementsByClassName('token')[t].value = null;
                         }
+                        updateCalendar();
                         // document.getElementById("token2").value=null;
                         alert("You've been successfully logged out!");
                         //document.getElementbyId('logout-btn').style.visibility='hidden';
-                        updateCalendar();
+                        
                     }
                     else {
                         alert("Try logging out again.");
@@ -442,9 +445,9 @@ $token=$_SESSION['token'];
                 })
                 .catch(err => console.error(err));
             document.getElementById('addToken').value ="";
-            document.getElementById('welcometext').innerHTML =" ";
-            document.getElementById('display').style.visibility = 'hidden'; 
-            document.getElementById('loggedin').style.visibility = 'hidden'; 
+            document.getElementById('welcometext').innerText =" ";
+            document.getElementById('display').style.display = 'none'; 
+            document.getElementById('loggedin').style.display = 'none'; 
             document.getElementById('loginform').style.display = 'block'; 
             document.getElementById('createuserform').style.display = 'block'; 
 
@@ -613,7 +616,7 @@ $token=$_SESSION['token'];
                 // days contains normal JavaScript Date objects.
                 // alert("Week starting on "+days[0]);
                 for (let d in days) {
-                    document.getElementsByClassName("week")[w].children[d].children[1].innerHTML = "";
+                    document.getElementsByClassName("week")[w].children[d].children[1].innerText = "";
                     document.getElementsByClassName("week")[w].children[d].firstElementChild.textContent = days[d].getDate();
                     document.getElementsByClassName("week")[w].children[d].id = days[d].toISOString().split('T')[0];
 
@@ -653,9 +656,11 @@ $token=$_SESSION['token'];
             let jsonData = JSON.parse(JSON.stringify(response));
             current_event_id=null;
             //console.log(jsonData[0].username);
-            document.getElementById('welcometext').innerHTML = jsonData[0].user+"'s Calendar";
-            document.getElementById('display').style.visibility = 'visible'; 
-            document.getElementById('loggedin').style.visibility = 'visible'; 
+            document.getElementById('welcometext').innerText = jsonData[0].user+"'s Calendar";
+            document.getElementById('display').style.display = 'flex'; 
+            //document.getElementById('loggedin').style.visibility = 'visible'; 
+            document.getElementById('loggedin').style.display = 'grid'; 
+
             document.getElementById('loginform').style.display = 'none'; 
             document.getElementById('createuserform').style.display = 'none'; 
             document.getElementById('addToken').value = jsonData[0].token;
@@ -677,12 +682,13 @@ $token=$_SESSION['token'];
                             if (jsonData[n].username == 'shared'){
                                 //shared calendar event
                                 eventText = document.createTextNode("Shared event: "+jsonData[n].title + " at " + jsonData[n].time);
+                                event.setAttribute("name","shared");
                             }
                             else {
                                 //show event title and event time
                                 eventText = document.createTextNode(jsonData[n].title + " at " + jsonData[n].time);
                                 //only allow dialog box to show if it is user's own event (not shared calendar)
-                                document.getElementById(calendar_date).children[1].addEventListener("click", showDialog, false);
+                                //document.getElementById(calendar_date).children[1].addEventListener("click", showDialog, false);
                                 document.getElementById(calendar_date).children[1].addEventListener("click", getEventID, false);
                             }
                             event.appendChild(eventText);
@@ -720,8 +726,20 @@ $token=$_SESSION['token'];
         document.getElementById("delete").addEventListener("click", deleteEvent, false);
         document.getElementById("share").addEventListener("click", shareEvent, false);
         function getEventID(event){
-            current_event_id=event.target.id
+            current_event_id=event.target.id;
+            eventName = event.target.getAttribute(name);
             console.log(current_event_id);
+            console.log(eventName);
+
+            //showDialog();
+            if (eventName == "shared") {
+                //console.log(event.target.name);
+                alert("cannot edit shared events");
+            }
+            else {               
+                showDialog();
+                
+            }
         }
         function showDialog(event) {
             // const eventid = event.target.id; //use to access the specific event in mysql
