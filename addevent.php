@@ -18,7 +18,7 @@ if(!isset($_SESSION['user_id'])){
 }
 else{
     $user_id=(int)$_SESSION['user_id'];
-    $token=$json_obj['token'];
+    $token=(string)$json_obj['token'];
 
     //token does not pass
     if(!hash_equals($_SESSION['token'], $token)){
@@ -32,6 +32,36 @@ else{
     exit;
    }
    else{
+       //pregmatch title 
+       if( !preg_match('/[|\#$%*+<>=?^_`{}~]+/', $title) ){
+           echo json_encode(array(
+               "invalid" => htmlentities((bool)true),
+               "message" => htmlentities((string)"invalid title")
+            ));
+            exit;
+        }
+
+       //pregmatch time
+       if( !preg_match('/^\d{2}:\d{2}$/', $time) ){
+           echo json_encode(array(
+               "invalid" => htmlentities((bool)true),
+               "message" => htmlentities((string)"invalid time")
+            ));
+            exit;
+        }
+        //pregmatch date
+        if( !preg_match('/^\d{4}-\d{2}-\d{2}$/', $date) ){
+            echo json_encode(array(
+                "invalid" => htmlentities((bool)true),
+                "message" => htmlentities((string)"invalid date")
+            ));
+            exit;
+        }
+
+
+
+
+
 
     $stmt=$mysqli->prepare("INSERT into events(user_id, title, date, time, tags) values(?,?,?,?,?)");
     if (!$stmt) {
