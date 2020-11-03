@@ -5,8 +5,8 @@ session_start();
 header("Content-Type: application/json"); 
 $json_str = file_get_contents('php://input');
 $json_obj = json_decode($json_str, true);
-$shareuser =  $json_obj['shareuser'];
-$eventid = $json_obj['eventid'];
+$shareuser =  (string)$json_obj['shareuser'];
+$eventid = (int)$json_obj['eventid'];
 
 if(!isset($_SESSION['user_id'])){
     echo json_encode(array(
@@ -15,7 +15,7 @@ if(!isset($_SESSION['user_id'])){
     exit;
 } 
 else {
-    $user_id=$_SESSION['user_id'];
+    $user_id=(int)$_SESSION['user_id'];
     $token=$json_obj['token'];
     
 
@@ -58,12 +58,12 @@ else {
         $stmt->close();
 
         //check if shareuser is the same as current 
-        // if ($user_id == $shareid){
-        //     echo json_encode(array(
-        //         "sameuser" => true,
-        //     ));
-        //     exit;
-        // }
+        if ($user_id == $shareid){
+            echo json_encode(array(
+                "sameuser" => true,
+            ));
+            exit;
+        }
 
 
         //get the event that will be shared
@@ -95,9 +95,9 @@ else {
         }
         $stmt->bind_param('ii',$eventid,$eventid);
         $stmt->execute();
-        echo json_encode(array(
-            "success" => true
-        ));
+        // echo json_encode(array(
+        //     "success" => true
+        // ));
         $stmt->close();
         
 

@@ -1,7 +1,14 @@
+/* https://colorpalettes.net/color-palette-4003/ */
+body {
+    background-color: #b9d5fd ;
+    color: lightslategrey;
+    margin-bottom: 20px;
+}
 td{
     width: 14%;
     height:15%;
-    border: 2px solid black;
+    border: 2px solid lightslategrey;
+    background-color: #f1f6f9;
 }
 table{
     width: 100%;
@@ -10,13 +17,31 @@ table{
 th{
     height: 50px;
 }
+#loggedout {
+    display:flex;
+    justify-content: center;
+    align-items: center;
+}
+#loggedout *{
+    margin: 5px 5px;
+    font-weight: bold;
+    
+}
+#loggedout p {
+    text-align: center;
+}
+#loginform, #createuserform {
+    border: 1px solid lightslategrey;
+}
 #loggedin{
-    /* visibility:hidden; */
-    display: grid;
-    /* display:none; */
+ 
+    display:none;
     justify-content: center;
     align-items: center;
     text-align: center;
+}
+#welcometext {
+    font-size: 20px;
 }
 #event-details{ 
     display:none;
@@ -31,17 +56,30 @@ th{
 }
 #monthyear {
     margin: 10px 10px;
+    font-size: 30px;
 }
 #year {
     padding-left: 5px;
 }
 
 #display{
-    /* visibility:hidden; */
-    display: flex;
-    /* display:none; */
+    display:none;
     justify-content: center;
     align-items: center;
 }
 
-
+input{
+    background-color: #f1f6f9;
+}
+button{
+    background-color: #f1f6f9;
+    border-radius:20px;
+    color:lightslategrey;
+}
+#addEventForm{
+    margin-top: 20px;
+    
+}
+#instructions{
+    display:none;
+}

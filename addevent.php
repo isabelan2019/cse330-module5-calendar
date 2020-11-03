@@ -5,10 +5,10 @@ session_start();
 header("Content-Type: application/json"); 
 $json_str = file_get_contents('php://input');
 $json_obj = json_decode($json_str, true);
-$title=$json_obj[(string)'title'];
-$time=$json_obj[(string)'time'];
-$date=$json_obj[(string)'date'];
-$tag=$json_obj[(string)'tag'];
+$title=(string)$json_obj['title'];
+$time=(string)$json_obj['time'];
+$date=(string)$json_obj['date'];
+$tag=(string)$json_obj['tag'];
 
 if(!isset($_SESSION['user_id'])){
     echo json_encode(array(
