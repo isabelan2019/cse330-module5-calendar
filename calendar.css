@@ -11,8 +11,9 @@ th{
     height: 50px;
 }
 #loggedin{
-    visibility:hidden;
+    /* visibility:hidden; */
     display: grid;
+    /* display:none; */
     justify-content: center;
     align-items: center;
     text-align: center;
@@ -36,8 +37,9 @@ th{
 }
 
 #display{
-    visibility:hidden;
+    /* visibility:hidden; */
     display: flex;
+    /* display:none; */
     justify-content: center;
     align-items: center;
 }

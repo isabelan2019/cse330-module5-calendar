@@ -1,4 +1,4 @@
-<?php
+<!-- <?php
 ini_set("session.cookie_httponly", 1);
 session_start();
 if (isset($_SESSION['userid'])) {
@@ -6,7 +6,7 @@ $username=(string) $_SESSION['username'];
 $token=$_SESSION['token'];
 }
 
-?>
+?> -->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -49,7 +49,7 @@ $token=$_SESSION['token'];
         <br><button id="shareCalendar"> Share Calendar with: </button> <input type="text" id="sharedcal-user" name="sharedcal-user">
     </div>
     
-    <?php
+    <!-- <?php
         // if (isset($_SESSION['user_id'])) {
         //     // show logout button 
         //     $username=(string) $_SESSION['username'];
@@ -76,7 +76,7 @@ $token=$_SESSION['token'];
         //     <input type='button' name='create-user' id='create-user' value='Create Account'>
         //     ";
         // }
-    ?>
+    ?> -->
 
     
     <div id="buttons">
@@ -300,7 +300,6 @@ $token=$_SESSION['token'];
         <button id="add"> Add Event</button>
     </div>
     <div id="event-details" title="Edit Event">
-        <p id="event-description"></p>
         <label for="new-event-title">Event Title: </label>
         <input type="text" id="new-event-title" name="new-event-title"> <br>
         <label for="new-date">Event Date: </label>
@@ -313,7 +312,10 @@ $token=$_SESSION['token'];
         <input type='hidden' id="editToken" value=""> 
         <button id="edit"> Edit Event</button> 
         <button id="delete"> Delete Event</button> <br>
-        <button id="share"> Share Event with: </button> <input type="text" id="shared-user" name="shared-user">
+        <input type='hidden' id="deleteToken" value=""> 
+        <button id="share"> Invite Others: </button> <input type="text" id="shared-user" name="shared-user">
+        <input type='hidden' id="inviteToken" value=""> 
+
     </div>
 
     <script>
@@ -328,7 +330,8 @@ $token=$_SESSION['token'];
         document.getElementById('schooldisplay').addEventListener("change", updateCalendar, false);
         document.getElementById('workdisplay').addEventListener("change", updateCalendar, false);
         document.getElementById('otherdisplay').addEventListener("change", updateCalendar, false);
-
+        //set global variable
+        let current_event_id=null;
 
         //add event to server
         function addEvent(event) {
@@ -337,7 +340,7 @@ $token=$_SESSION['token'];
             const time = document.getElementById("time").value;
             const date = document.getElementById("date").value;
             const addToken = document.getElementById("addToken").value;
-            
+            console.log(addToken);
             let tags = document.getElementsByName('tag');
             let checkedtag =null;
             for (let i=0; i<tags.length; i++){
@@ -398,7 +401,7 @@ $token=$_SESSION['token'];
 
                         alert("You've successfully logged in!");
                         updateCalendar();
-                        //document.getElementbyId('logout-btn').style.visibility='visible';
+                       // document.getElementbyId('logout-btn').style.visibility='visible';
                     }
                     else {
                         alert("Incorrect Username or Password. Try again");
@@ -438,16 +441,12 @@ $token=$_SESSION['token'];
                     }
                 })
                 .catch(err => console.error(err));
-            updateCalendar();
             document.getElementById('addToken').value ="";
             document.getElementById('welcometext').innerHTML =" ";
             document.getElementById('display').style.visibility = 'hidden'; 
             document.getElementById('loggedin').style.visibility = 'hidden'; 
-            document.getElementById('loginform').style.visibility = 'visible'; 
-            document.getElementById('createuserform').style.visibility = 'visible'; 
-
-
-
+            document.getElementById('loginform').style.display = 'block'; 
+            document.getElementById('createuserform').style.display = 'block'; 
 
         }
         //create user
@@ -643,28 +642,32 @@ $token=$_SESSION['token'];
                         parseEvents(data);
                     }
                 })
-                //.then(response=>response.text())
-                //.then(text=>console.log(text))
+                // .then(response=>response.text())
+                // .then(text=>console.log(text))
                 .catch(err => console.error(err));
 
         }
         //parse out events based on database events
         function parseEvents(response) {
             
-
             let jsonData = JSON.parse(JSON.stringify(response));
+            current_event_id=null;
             //console.log(jsonData[0].username);
-            document.getElementById('welcometext').innerHTML = jsonData[0].username+"'s Calendar";
+            document.getElementById('welcometext').innerHTML = jsonData[0].user+"'s Calendar";
             document.getElementById('display').style.visibility = 'visible'; 
             document.getElementById('loggedin').style.visibility = 'visible'; 
-            document.getElementById('loginform').style.visibility = 'hidden'; 
-            document.getElementById('createuserform').style.visibility = 'hidden'; 
+            document.getElementById('loginform').style.display = 'none'; 
+            document.getElementById('createuserform').style.display = 'none'; 
+            document.getElementById('addToken').value = jsonData[0].token;
+            document.getElementById('editToken').value = jsonData[0].token;
+            document.getElementById('deleteToken').value = jsonData[0].token;
+            document.getElementById('inviteToken').value = jsonData[0].token;
 
 
             let calendar_days = document.getElementsByClassName("day");
             for (let i = 0; i < calendar_days.length; i++) {
                 let calendar_date = calendar_days[i].id;
-                for (let n = 0; n < jsonData.length; n++) {
+                for (let n = 1; n < jsonData.length; n++) {
                     if (calendar_date == jsonData[n].date) {
                         let eventID = jsonData[n].event_id;
                         if (document.getElementById(eventID) == null) {
@@ -673,32 +676,37 @@ $token=$_SESSION['token'];
                             let eventText=" ";
                             if (jsonData[n].username == 'shared'){
                                 //shared calendar event
-                                eventText = document.createTextNode("shared event: "+jsonData[n].title + " at " + jsonData[n].time);
+                                eventText = document.createTextNode("Shared event: "+jsonData[n].title + " at " + jsonData[n].time);
                             }
                             else {
                                 //show event title and event time
                                 eventText = document.createTextNode(jsonData[n].title + " at " + jsonData[n].time);
+                                //only allow dialog box to show if it is user's own event (not shared calendar)
+                                document.getElementById(calendar_date).children[1].addEventListener("click", showDialog, false);
+                                document.getElementById(calendar_date).children[1].addEventListener("click", getEventID, false);
                             }
                             event.appendChild(eventText);
                             //set id of this div to the eventID
                             event.id = eventID;
-                            event.setAttribute('class',jsonData[n].tags);
+                           // event.setAttribute('class',jsonData[n].tags);
+                                event.setAttribute('class',jsonData[n].tags);
+                           
                             //append this div to the div class events 
                             document.getElementById(calendar_date).children[1].appendChild(event);
                             //show dialogue box
-                            document.getElementById(calendar_date).children[1].addEventListener("click", showDialog, false);
+                           
 
                             //hidden token to events
-                            let eventToken = document.createElement('input');
-                            eventToken.value=jsonData[n].token;
-                            //appendChild(document.createTextNode(jsonData[n].token));
-                            eventToken.id = "token"+eventID;
-                            eventToken.setAttribute('type', 'hidden');
-                            event.appendChild(eventToken);
+                            // let eventToken = document.createElement('input');
+                            // eventToken.value=jsonData[n].token;
+                            // //appendChild(document.createTextNode(jsonData[n].token));
+                            // eventToken.id = "token"+eventID;
+                            // eventToken.setAttribute('type', 'hidden');
+                            // event.appendChild(eventToken);
                             //document.getElementById(calendar_date).children[1].appendChild(eventToken);
 
                             //hidden token to addevent form 
-                            document.getElementById('addToken').value = jsonData[n].token;
+                            // document.getElementById('addToken').value = jsonData[n].token;
                             //hidden token to edit event details form 
                             //document.getElementById('editToken').value = jsonData[n].token;
 
@@ -708,15 +716,20 @@ $token=$_SESSION['token'];
                 }
             }
         }
-
+        document.getElementById("edit").addEventListener("click", editEvent, false);
+        document.getElementById("delete").addEventListener("click", deleteEvent, false);
+        document.getElementById("share").addEventListener("click", shareEvent, false);
+        function getEventID(event){
+            current_event_id=event.target.id
+            console.log(current_event_id);
+        }
         function showDialog(event) {
-            let eventid = event.target.id; //use to access the specific event in mysql
-            //console.log(eventToken);
+            // const eventid = event.target.id; //use to access the specific event in mysql
+            // //console.log(eventToken);
+            // console.log(eventid);
             $("#event-details").dialog();
-
-            document.getElementById("edit").addEventListener("click", editEvent, false);
-            document.getElementById("delete").addEventListener("click", deleteEvent, false);
-            document.getElementById("share").addEventListener("click", shareEvent, false);
+        }
+           
 
 
             //edit event 
@@ -725,7 +738,7 @@ $token=$_SESSION['token'];
                 const ntitle = document.getElementById("new-event-title").value;
                 const ntime = document.getElementById("new-time").value;
                 const ndate = document.getElementById("new-date").value;
-                const token = document.getElementById("token"+eventid).value;
+                const token = document.getElementById("editToken").value;
                 let tags = document.getElementsByName('new-tag');
                 let checkedtag =null;
                 for (let i=0; i<tags.length; i++){
@@ -734,7 +747,8 @@ $token=$_SESSION['token'];
                     }
                 }
 
-                const data = { 'new-event-title': ntitle, 'new-date': ndate, 'new-time': ntime, 'new-tag':checkedtag, 'eventid': eventid, 'token': token };
+                const data = { 'new-event-title': ntitle, 'new-date': ndate, 'new-time': ntime, 'new-tag':checkedtag, 'eventid': current_event_id, 'token': token };
+                console.log(data);
                 fetch('editevent.php', {
                     method: 'POST',
                     body: JSON.stringify(data),
@@ -756,11 +770,12 @@ $token=$_SESSION['token'];
             }
 
             function deleteEvent(event) {
-                console.log(eventid);
                 event.preventDefault();
-                const token = document.getElementById("token"+eventid).value;
+                console.log(current_event_id);
+                const token = document.getElementById("deleteToken").value;
                 console.log(token);
-                const data = { 'eventid': eventid, 'token':token };
+                
+                const data = { 'eventid': current_event_id, 'token':token };
                 fetch('deleteevent.php', {
                     method: 'POST',
                     body: JSON.stringify(data),
@@ -778,8 +793,8 @@ $token=$_SESSION['token'];
             function shareEvent(event){
                 event.preventDefault();
                 const shareuser =  document.getElementById("shared-user").value;
-                const token = document.getElementById("token"+eventid).value;
-                const data = { 'eventid': eventid, 'shareuser':shareuser, 'token':token };
+                const token = document.getElementById("inviteToken").value;
+                const data = { 'eventid': current_event_id, 'shareuser':shareuser, 'token':token };
                 fetch('shareevent.php', {
                     method: 'POST',
                     body: JSON.stringify(data),
@@ -801,11 +816,13 @@ $token=$_SESSION['token'];
                     }
                     
                 })
+                // .then(response=>response.text())
+                // .then(text=>console.log(text))
                 .catch(err => console.error(err));
                 document.getElementById('shared-user').value = "";
                 $("#event-details").dialog('close');
             }
-        }
+        
 
         function shareCalendar(event){
             const sharecal = document.getElementById('sharedcal-user').value;
