@@ -95,9 +95,6 @@ else {
             }
             $stmt->bind_param('ii',$eventid,$eventid);
             $stmt->execute();
-            // echo json_encode(array(
-            //     "success" => true
-            // ));
             $stmt->close();
 
             //add new event where the new user is shareuser
