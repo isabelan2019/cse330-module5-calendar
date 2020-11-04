@@ -364,7 +364,7 @@ $token=$_SESSION['token'];
                     checkedtag = tags[i].value;
                 }
             }
-            //console.log(checkedtag);
+            console.log(checkedtag);
               
             const data = { 'title': title, 'date': date, 'time': time, 'tag':checkedtag, 'token': addToken };
             fetch("addevent.php", {

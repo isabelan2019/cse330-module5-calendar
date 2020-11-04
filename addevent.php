@@ -9,6 +9,9 @@ $title=(string)$json_obj['title'];
 $time=(string)$json_obj['time'];
 $date=(string)$json_obj['date'];
 $tag=(string)$json_obj['tag'];
+if (!$tag) {
+    $tag = NULL;
+}
 
 if(!isset($_SESSION['user_id'])){
     echo json_encode(array(
@@ -25,24 +28,24 @@ else{
 	   die("Request forgery detected");
     }
     if(empty($title) || empty($time) || empty($date)){
-    echo json_encode(array(
-        "success"=>htmlentities((bool)false),
-        "message"=>htmlentities((string)"empty inputs")
-    ));
-    exit;
-   }
-   else{
-       //pregmatch title 
-       if( !preg_match('/[|\#$%*+<>=?^_`{}~]+/', $title) ){
-           echo json_encode(array(
-               "invalid" => htmlentities((bool)true),
-               "message" => htmlentities((string)"invalid title")
+        echo json_encode(array(
+            "success"=>htmlentities((bool)false),
+            "message"=>htmlentities((string)"empty inputs")
+        ));
+        exit;
+    }
+    else{
+        //pregmatch title 
+        if( preg_match('/[|\#$%*+<>=?^_`{}~]+/', $title) ){
+            echo json_encode(array(
+                "invalid" => htmlentities((bool)true),
+                "message" => htmlentities((string)"invalid title")
             ));
             exit;
         }
 
-       //pregmatch time
-       if( !preg_match('/^\d{2}:\d{2}$/', $time) ){
+        //pregmatch time
+        if( !preg_match('/^\d{2}:\d{2}$/', $time) ){
            echo json_encode(array(
                "invalid" => htmlentities((bool)true),
                "message" => htmlentities((string)"invalid time")
@@ -57,10 +60,6 @@ else{
             ));
             exit;
         }
-
-
-
-
 
 
     $stmt=$mysqli->prepare("INSERT into events(user_id, title, date, time, tags) values(?,?,?,?,?)");
