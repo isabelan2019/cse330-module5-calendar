@@ -857,10 +857,10 @@ $token=$_SESSION['token'];
                     if (data.exists == false) {
                         alert("This user does not exist. Please choose another");
                     } 
-                    if (data.sameuser == true) {
+                    else if (data.sameuser == true) {
                         alert("you cannot share with yourself");
                     }
-                    if(data.invited==true){
+                    else if(data.invited==true){
                         alert("This user has already been invited");
                     }
                     else {
