@@ -1,12 +1,4 @@
-<!-- <?php
-ini_set("session.cookie_httponly", 1);
-session_start();
-if (isset($_SESSION['userid'])) {
-$username=(string) $_SESSION['username'];
-$token=$_SESSION['token'];
-}
 
-?> -->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -51,35 +43,6 @@ $token=$_SESSION['token'];
         <br><button id="shareCalendar"> Share Calendar with: </button> <input type="text" id="sharedcal-user" name="sharedcal-user">
         <br><button id="instructions-btn"> Instructions </button>
     </div>
-    
-    <!-- <?php
-        // if (isset($_SESSION['user_id'])) {
-        //     // show logout button 
-        //     $username=(string) $_SESSION['username'];
-        //     printf("<br>not you? <button name='logout-btn' id='logout-btn'> Log Out </button>");
-        // }
-        // else{ 
-        //     //not logged in -- show log in and register user
-        //     echo "\n\t 
-        //     <div id='loginform'>
-        //         <p>Login</p>
-        //         <label for='username'>Username: </label>
-        //         <input type='text' id='username' name='username' placeholder='Username' required>
-        //         <label for='current-password'>Password: </label>
-        //         <input type='password' id='password' name='password' placeholder='Password' required>
-        //         <button name='login-btn' id='login-btn'> Log In </button>
-        //     </div>";
-
-        //     echo "\n\t
-        //     <p>New User? Register Below!</p>
-        //     <label for='new-username'>New Username: </label>
-        //     <input type='text' id='new-username' name='new-username' placeholder='New Username' required>
-        //     <label for='new-password'>New Password: </label>
-        //     <input type='password' id='new-password' name='new-password' placeholder='New Password' required>
-        //     <input type='button' name='create-user' id='create-user' value='Create Account'>
-        //     ";
-        // }
-    ?> -->
 
     
     <div id="buttons">
@@ -340,15 +303,15 @@ $token=$_SESSION['token'];
         document.getElementById("add").addEventListener("click", addEvent, false);
         document.getElementById("logout-btn").addEventListener("click", logoutAjax, false);
         document.getElementById("shareCalendar").addEventListener("click", shareCalendar, false);
-
         document.getElementById('personaldisplay').addEventListener("change", updateCalendar, false);
         document.getElementById('schooldisplay').addEventListener("change", updateCalendar, false);
         document.getElementById('workdisplay').addEventListener("change", updateCalendar, false);
         document.getElementById('otherdisplay').addEventListener("change", updateCalendar, false);
         document.getElementById('instructions-btn').addEventListener("click",function(){$("#instructions").dialog({width:500})},false);
+       
         //set global variables
-
         let current_event_id=null;
+
         //add event to server
         function addEvent(event) {
             event.preventDefault();
@@ -384,14 +347,12 @@ $token=$_SESSION['token'];
 
                 }
             })
-                // .then(response=>response.text())
-                // .then(text=>console.log(text))
+             
             .catch(err => console.error(err));
             document.getElementById('event-title').value = "";
             document.getElementById('date').value = "";
             document.getElementById('time').value = "";
-            //let tags = document.getElementsByName('tag');
-            //let checkedtag =null;
+            
             for (let i=0; i<tags.length; i++){
                 tags[i].checked = false;
 
@@ -471,6 +432,7 @@ $token=$_SESSION['token'];
             document.getElementById('instructions').style.display = 'none'; 
             document.getElementById('loginform').style.display = 'block'; 
             document.getElementById('createuserform').style.display = 'block'; 
+
 
         }
         //create user
@@ -573,14 +535,12 @@ $token=$_SESSION['token'];
         document.getElementById("next-month-btn").addEventListener("click", function (event) {
             currentMonth = currentMonth.nextMonth();
             updateCalendar(); // Whenever the month is updated, we'll need to re-render the calendar in HTML
-            // alert("The new month is " + currentMonth.month + " " + currentMonth.year);
         }, false);
 
         // Change the month when the "prev" button is pressed
         document.getElementById("prev-month-btn").addEventListener("click", function (event) {
             currentMonth = currentMonth.prevMonth();// Previous month would be currentMonth.prevMonth()
             updateCalendar(); // Whenever the month is updated, we'll need to re-render the calendar in HTML
-            //   alert("The new month is " + currentMonth.month + " " + currentMonth.year);
         }, false);
 
 
@@ -613,12 +573,7 @@ $token=$_SESSION['token'];
                 monthTitle = "December ";
             }
 
-            //let sessiontoken=document.getElementById('addToken').value;
-            //console.log(sessiontoken);
-            //hidden token to addevent form 
-            //document.getElementById('addToken').value = sessiontoken;
-
-            
+           
 
             document.getElementById("month").textContent = monthTitle;
             //currentMonth.month;
@@ -635,7 +590,6 @@ $token=$_SESSION['token'];
             for (let w in weeks) {
                 let days = weeks[w].getDates();
                 // days contains normal JavaScript Date objects.
-                // alert("Week starting on "+days[0]);
                 for (let d in days) {
                     document.getElementsByClassName("week")[w].children[d].children[1].innerText = "";
                     document.getElementsByClassName("week")[w].children[d].firstElementChild.textContent = days[d].getDate();
@@ -644,7 +598,6 @@ $token=$_SESSION['token'];
                 }
             }
             //get events 
-            
             const personaldisplay = document.getElementById('personaldisplay').checked;
             const schooldisplay =document.getElementById('schooldisplay').checked;
             const workdisplay = document.getElementById('workdisplay').checked; 
@@ -666,20 +619,18 @@ $token=$_SESSION['token'];
                         parseEvents(data);
                     }
                 })
-                // .then(response=>response.text())
-                // .then(text=>console.log(text))
+              
                 .catch(err => console.error(err));
 
         }
+
         //parse out events based on database events
         function parseEvents(response) {
             
             let jsonData = JSON.parse(JSON.stringify(response));
             current_event_id=null;
-            //console.log(jsonData[0].username);
             document.getElementById('welcometext').innerText = jsonData[0].user+"'s Calendar";
             document.getElementById('display').style.display = 'flex'; 
-            //document.getElementById('loggedin').style.visibility = 'visible'; 
             document.getElementById('loggedin').style.display = 'grid'; 
             document.getElementById('loginform').style.display = 'none'; 
             document.getElementById('createuserform').style.display = 'none'; 
@@ -713,59 +664,38 @@ $token=$_SESSION['token'];
                                 //show event title and event time
                                 eventText = document.createTextNode("Group event: "+jsonData[n].title + " at " + jsonData[n].time);
                                 //only allow dialog box to show if it is user's own event (not shared calendar)
-                                //document.getElementById(calendar_date).children[1].addEventListener("click", showDialog, false);
                                 document.getElementById(calendar_date).children[1].addEventListener("click", getEventID, false);
                                 }
                                 else{
                                 //show event title and event time
                                 eventText = document.createTextNode(jsonData[n].title + " at " + jsonData[n].time);
                                 //only allow dialog box to show if it is user's own event (not shared calendar)
-                                //document.getElementById(calendar_date).children[1].addEventListener("click", showDialog, false);
                                 document.getElementById(calendar_date).children[1].addEventListener("click", getEventID, false);
                                 }
                             }
                             event.appendChild(eventText);
                             //set id of this div to the eventID
                             event.id = eventID;
-                           // event.setAttribute('class',jsonData[n].tags);
-                                event.setAttribute('class',jsonData[n].tags);
+                            event.setAttribute('class',jsonData[n].tags);
                            
                             //append this div to the div class events 
                             document.getElementById(calendar_date).children[1].appendChild(event);
-                            //show dialogue box
-                           
-
-                            //hidden token to events
-                            // let eventToken = document.createElement('input');
-                            // eventToken.value=jsonData[n].token;
-                            // //appendChild(document.createTextNode(jsonData[n].token));
-                            // eventToken.id = "token"+eventID;
-                            // eventToken.setAttribute('type', 'hidden');
-                            // event.appendChild(eventToken);
-                            //document.getElementById(calendar_date).children[1].appendChild(eventToken);
-
-                            //hidden token to addevent form 
-                            // document.getElementById('addToken').value = jsonData[n].token;
-                            //hidden token to edit event details form 
-                            //document.getElementById('editToken').value = jsonData[n].token;
-
+                            
                         }
 
                     }
                 }
             }
         }
+
         document.getElementById("edit").addEventListener("click", editEvent, false);
         document.getElementById("delete").addEventListener("click", deleteEvent, false);
         document.getElementById("share").addEventListener("click", shareEvent, false);
+
         function getEventID(event){
             current_event_id=event.target.id;
             eventName = event.target.getAttribute('name');
-            // console.log(current_event_id);
-            // console.log(eventName);
-            //showDialog();
             if (eventName == "shared") {
-                //console.log(event.target.name);
                 alert("cannot edit shared events");
             }
             else {               
@@ -773,112 +703,109 @@ $token=$_SESSION['token'];
             }
         }
         function showDialog(event) {
-            // const eventid = event.target.id; //use to access the specific event in mysql
-            // //console.log(eventToken);
-            // console.log(eventid);
             $("#event-details").dialog({width:400});
         }
            
 
 
-            //edit event 
-            function editEvent(event) {
-                event.preventDefault();
-                const ntitle = document.getElementById("new-event-title").value;
-                const ntime = document.getElementById("new-time").value;
-                const ndate = document.getElementById("new-date").value;
-                const token = document.getElementById("editToken").value;
-                let tags = document.getElementsByName('new-tag');
-                let checkedtag =null;
-                for (let i=0; i<tags.length; i++){
-                    if (tags[i].checked){
-                      checkedtag = tags[i].value;
-                    }
+        //edit event 
+        function editEvent(event) {
+            event.preventDefault();
+            const ntitle = document.getElementById("new-event-title").value;
+            const ntime = document.getElementById("new-time").value;
+            const ndate = document.getElementById("new-date").value;
+            const token = document.getElementById("editToken").value;
+            let tags = document.getElementsByName('new-tag');
+            let checkedtag =null;
+            for (let i=0; i<tags.length; i++){
+                if (tags[i].checked){
+                    checkedtag = tags[i].value;
                 }
-
-                const data = { 'new-event-title': ntitle, 'new-date': ndate, 'new-time': ntime, 'new-tag':checkedtag, 'eventid': current_event_id, 'token': token };
-                console.log(data);
-                fetch('editevent.php', {
-                    method: 'POST',
-                    body: JSON.stringify(data),
-                    headers: { 'content-type': 'application/json' }
-                })
-                    .then(response => response.json())
-                    // .then(response=>response.text())
-                    //  .then(text=>console.log(text))
-                    .then(data => {
-                        updateCalendar();
-                        alert(data.success ? "Event changed" : `Could not be edited: ${data.message}`);
-                    })
-
-                    .catch(err => console.error(err));
-                document.getElementById('new-event-title').value = "";
-                document.getElementById('new-date').value = "";
-                document.getElementById('new-time').value = "";
-                for (let i=0; i<tags.length; i++){
-                    tags[i].checked = false;
-                }
-                $("#event-details").dialog('close');
             }
 
-            function deleteEvent(event) {
-                event.preventDefault();
-                console.log(current_event_id);
-                const token = document.getElementById("deleteToken").value;
-                console.log(token);
-                
-                const data = { 'eventid': current_event_id, 'token':token };
-                fetch('deleteevent.php', {
-                    method: 'POST',
-                    body: JSON.stringify(data),
-                    headers: { 'content-type': 'application/json' }
-                })
+            const data = { 'new-event-title': ntitle, 'new-date': ndate, 'new-time': ntime, 'new-tag':checkedtag, 'eventid': current_event_id, 'token': token };
+            console.log(data);
+            fetch('editevent.php', {
+                method: 'POST',
+                body: JSON.stringify(data),
+                headers: { 'content-type': 'application/json' }
+            })
                 .then(response => response.json())
-                .then(data => {
-                    alert(data.success ? "Event deleted" : `Could not be deleted: ${data.message}`);
-                    updateCalendar();
-                })
-                .catch(err => console.error(err));
-                $("#event-details").dialog('close');
-
-            }
-            function shareEvent(event){
-                event.preventDefault();
-                const shareuser =  document.getElementById("shared-user").value;
-                const token = document.getElementById("inviteToken").value;
-                const data = { 'eventid': current_event_id, 'shareuser':shareuser, 'token':token };
-                fetch('shareevent.php', {
-                    method: 'POST',
-                    body: JSON.stringify(data),
-                    headers: { 'content-type': 'application/json' }
-                }) 
-                .then(response => response.json())
-                .then(data => {
-                    if (data.exists == false) {
-                        alert("This user does not exist. Please choose another");
-                    } 
-                    else if (data.sameuser == true) {
-                        alert("you cannot share with yourself");
-                    }
-                    else if(data.invited==true){
-                        alert("This user has already been invited");
-                    }
-                    else {
-                        updateCalendar();
-                        //console.log(data);
-                        alert(data.success ? "Event shared" : `Could not be shared: ${data.message}`);
-
-                    }
-                    
-                })
                 // .then(response=>response.text())
-                // .then(text=>console.log(text))
-                .catch(err => console.error(err));
-                document.getElementById('shared-user').value = "";
-                $("#event-details").dialog('close');
-            }
-        
+                //  .then(text=>console.log(text))
+                .then(data => {
+                    updateCalendar();
+                    alert(data.success ? "Event changed" : `Could not be edited: ${data.message}`);
+                })
 
+                .catch(err => console.error(err));
+            document.getElementById('new-event-title').value = "";
+            document.getElementById('new-date').value = "";
+            document.getElementById('new-time').value = "";
+            for (let i=0; i<tags.length; i++){
+                tags[i].checked = false;
+            }
+            $("#event-details").dialog('close');
+        }
+
+        //delete event
+        function deleteEvent(event) {
+            event.preventDefault();
+            console.log(current_event_id);
+            const token = document.getElementById("deleteToken").value;
+            console.log(token);
+            
+            const data = { 'eventid': current_event_id, 'token':token };
+            fetch('deleteevent.php', {
+                method: 'POST',
+                body: JSON.stringify(data),
+                headers: { 'content-type': 'application/json' }
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.success ? "Event deleted" : `Could not be deleted: ${data.message}`);
+                updateCalendar();
+            })
+            .catch(err => console.error(err));
+            $("#event-details").dialog('close');
+
+        }
+        
+        //invite others to group events
+        function shareEvent(event){
+            event.preventDefault();
+            const shareuser =  document.getElementById("shared-user").value;
+            const token = document.getElementById("inviteToken").value;
+            const data = { 'eventid': current_event_id, 'shareuser':shareuser, 'token':token };
+            fetch('shareevent.php', {
+                method: 'POST',
+                body: JSON.stringify(data),
+                headers: { 'content-type': 'application/json' }
+            }) 
+            .then(response => response.json())
+            .then(data => {
+                if (data.exists == false) {
+                    alert("This user does not exist. Please choose another");
+                } 
+                if (data.sameuser == true) {
+                    alert("you cannot share with yourself");
+                }
+                if(data.invited==true){
+                    alert("This user has already been invited");
+                }
+                else {
+                    updateCalendar();
+                    alert(data.success ? "Event shared" : `Could not be shared: ${data.message}`);
+
+                }
+                
+            })
+            .catch(err => console.error(err));
+            document.getElementById('shared-user').value = "";
+            $("#event-details").dialog('close');
+        }
+    
+        //share all calendar events
         function shareCalendar(event){
             const sharecal = document.getElementById('sharedcal-user').value;
             //add token value 
