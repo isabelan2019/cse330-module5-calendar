@@ -1,14 +1,20 @@
 # CSE330
-Isabel An: 456827
-
-Claire Irawan: 456941
+Student IDs
+456827
+456941
 
 Link: http://ec2-18-188-149-204.us-east-2.compute.amazonaws.com/~isabel.an/module5_group/main.html
 
-Login Info:
--Username: test Password:1
--Username: test2 Password:2
--Username: test3 Password:3
+Login Info
+Username: test 
+Password: 1
+
+Username: test2 
+Password: 2
+
+Username: test3 
+Password: 3
+
 Creative Portion
 
 1. Create group events. Users are able to invite other registered users to their events. Invited users cannot be invited again. Group events can be edited by any user invited to the event, and the edit will change the event for all invited users. Group events can be deleted on individual calendars, but not everyone's calendars. These events can be sorted by tags.
