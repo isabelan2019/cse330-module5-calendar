@@ -16,9 +16,6 @@ if (!$tags) {
     $tags = NULL;
 }
 
-
-//$json_obj[(int) "eventid"];
-
 if(!isset($_SESSION['user_id'])){
     echo json_encode(array(
         "loggedin"=>htmlentities((bool)false)
