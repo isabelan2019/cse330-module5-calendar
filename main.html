@@ -98,11 +98,15 @@ $token=$_SESSION['token'];
     </div>
 
     <div id="instructions" class="instructions" title="Instructions">
-        <p> Welcome to your calendar! You may add events to your calendar by scrolling to the bottom. For each event, you have the choice of tagging an event with
-            categories of personal, school, or work. You may click on your events on the calendar to edit or delete them. When you edit them, you will have to reenter
-            all information again. You may also create group events by inviting other registered users to your event after it has been made, and it will appear on recipients' calendars.
-            However, you must invite other users one at a time. Other invitees' may edit and delete group events, which will edit and delete group events for all invitees.  
-            Lastly, you may share your entire calendar with other registered users, but they may not edit or delete these events.  </p>
+        <ul>
+            <li><strong>Add Events: </strong>Scroll to the bottom to add events to your personal calendar.</li>
+            <li><strong>Delete/Edit Events: </strong>Click on a personal invite on your calendar to delete and edit your event.</li>
+            <li><strong>Share Calendar: </strong>You may enter another registered user in order to share all your calendar invites with them.
+            Users receiving your calendar will have your events displayed but will be unable to edit or delete your shared events. </li>
+            <li><strong>Group Events/Invite Others:</strong>You may enter another registered user in order to invite them to your event. Any user
+            is able to share a group event, regardless of who created the event. Group events may be deleted from your personal calendar, but will not be deleted from others. Group events may be
+            edited by any user and this will be reflected on all calendars of invited users. You may not invite a user who has already been invited. </li>
+        </ul>
     </div>
     
     <table id="calendar">
@@ -341,9 +345,10 @@ $token=$_SESSION['token'];
         document.getElementById('schooldisplay').addEventListener("change", updateCalendar, false);
         document.getElementById('workdisplay').addEventListener("change", updateCalendar, false);
         document.getElementById('otherdisplay').addEventListener("change", updateCalendar, false);
-        //set global variable
-        let current_event_id=null;
+        document.getElementById('instructions-btn').addEventListener("click",function(){$("#instructions").dialog({width:500})},false);
+        //set global variables
 
+        let current_event_id=null;
         //add event to server
         function addEvent(event) {
             event.preventDefault();
@@ -704,11 +709,20 @@ $token=$_SESSION['token'];
                                 event.setAttribute("name","shared");
                             }
                             else {
+                                if(jsonData[n].group_id!=null){
+                                //show event title and event time
+                                eventText = document.createTextNode("Group event: "+jsonData[n].title + " at " + jsonData[n].time);
+                                //only allow dialog box to show if it is user's own event (not shared calendar)
+                                //document.getElementById(calendar_date).children[1].addEventListener("click", showDialog, false);
+                                document.getElementById(calendar_date).children[1].addEventListener("click", getEventID, false);
+                                }
+                                else{
                                 //show event title and event time
                                 eventText = document.createTextNode(jsonData[n].title + " at " + jsonData[n].time);
                                 //only allow dialog box to show if it is user's own event (not shared calendar)
                                 //document.getElementById(calendar_date).children[1].addEventListener("click", showDialog, false);
                                 document.getElementById(calendar_date).children[1].addEventListener("click", getEventID, false);
+                                }
                             }
                             event.appendChild(eventText);
                             //set id of this div to the eventID
@@ -846,6 +860,9 @@ $token=$_SESSION['token'];
                     if (data.sameuser == true) {
                         alert("you cannot share with yourself");
                     }
+                    if(data.invited==true){
+                        alert("This user has already been invited");
+                    }
                     else {
                         updateCalendar();
                         //console.log(data);
@@ -873,7 +890,7 @@ $token=$_SESSION['token'];
             })
                 .then(response => response.json())
                 .then(data => {
-                    console.log(data);
+                    
                     if (data.exists == false) {
                         alert("This user does not exist. Please choose another");
                     } 
@@ -881,7 +898,6 @@ $token=$_SESSION['token'];
                         alert("you cannot share with yourself");
                     } 
                     else {
-                        console.log(data);
                         updateCalendar();
                         alert(data.success ? "Calendar shared" : `Calendar could not be shared: ${data.message}`);
 
