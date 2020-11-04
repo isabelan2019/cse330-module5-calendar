@@ -78,8 +78,8 @@ button{
 }
 #addEventForm{
     margin-top: 20px;
-    
 }
 #instructions{
-    display:none;
+    /* visibility: hidden; */
+    display: none;
 }
