@@ -9,7 +9,7 @@ $event_id=(int)$json_obj["eventid"];
 $get_group_id=null;
 if(!isset($_SESSION['user_id'])){
     echo json_encode(array(
-        "loggedin"=>false
+        "loggedin"=>htmlentities((bool)false)
     ));
     exit;
 }
@@ -52,15 +52,15 @@ else{
         $stmt=$mysqli->prepare("delete from events where event_id=? and user_id=?");
         if (!$stmt) {
             echo json_encode(array(
-                "success" => false,
-                "message" => "ERROR checking database"
+                "success" => htmlentities(false),
+                "message" => htmlentities((string)"ERROR checking database")
             ));
             exit;
         }
         $stmt->bind_param('ii',$event_id,$user_id);
         $stmt->execute();
         echo json_encode(array(
-            "success" => true
+            "success" => htmlentities((bool)true)
         ));
         $stmt->close();
     // }

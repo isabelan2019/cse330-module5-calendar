@@ -10,13 +10,13 @@ $eventid = (int)$json_obj['eventid'];
 
 if(!isset($_SESSION['user_id'])){
     echo json_encode(array(
-        "loggedin"=>false
+        "loggedin"=>htmlentities((bool)false)
     ));
     exit;
 } 
 else {
     $user_id=(int)$_SESSION['user_id'];
-    $token=$json_obj['token'];
+    $token=(string)$json_obj['token'];
     
 
     //token does not pass
@@ -25,8 +25,8 @@ else {
     }
     if(empty($shareuser) ){
     echo json_encode(array(
-        "success"=>false,
-        "message"=>"empty inputs"
+        "success"=>htmlentities((bool)false),
+        "message"=>htmlentities((string)"empty inputs")
     ));
     exit;
     }
@@ -37,8 +37,8 @@ else {
         $stmt->bind_param('s', $shareuser);
         if(!$stmt){
             echo json_encode(array(
-            "success" => false,
-            "message" => "ERROR checking database"
+                "success"=>htmlentities((bool)false),
+                "message" => htmlentities((string)"ERROR checking database")
         ));
         exit;
         }
@@ -51,7 +51,7 @@ else {
         //username does not exist
         if (!$cnt>0) {
             echo json_encode(array(
-                "exists" => false,
+                "exists" => htmlentities(false),
             ));
             exit;
         }
@@ -60,7 +60,7 @@ else {
         //check if shareuser is the same as current 
         if ($user_id == $shareid){
             echo json_encode(array(
-                "sameuser" => true,
+                "sameuser" => htmlentities((bool)true),
             ));
             exit;
         }
@@ -72,8 +72,8 @@ else {
         $stmt->bind_param('ii',$eventid,$user_id);
         if (!$stmt) {
             echo json_encode(array(
-                "success" => false,
-                "message" => "ERROR getting event from database"
+                "success" => htmlentities((bool)false),
+                "message" => htmlentities((string)"ERROR getting event from database")
             ));
             exit;
         }
@@ -88,8 +88,8 @@ else {
             $stmt=$mysqli->prepare("UPDATE events set group_id=? where event_id=?");
             if (!$stmt) {
                 echo json_encode(array(
-                    "success" => false,
-                    "message" => "ERROR inserting into database"
+                    "success" => htmlentities((bool)false),
+                    "message" => htmlentities((string)"ERROR inserting into database")
                 ));
                 exit;
             }
@@ -104,15 +104,15 @@ else {
             $stmt=$mysqli->prepare("INSERT into events(user_id, title, date, time, tags, group_id) values(?,?,?,?,?,?)");
             if (!$stmt) {
                 echo json_encode(array(
-                    "success" => false,
-                    "message" => "ERROR inserting into database"
+                    "success" => htmlentities((bool)false),
+                    "message" => htmlentities("ERROR inserting into database")
                 ));
                 exit;
             }
             $stmt->bind_param('issssi',$shareid,$sharetitle,$sharedate,$sharetime,$sharetag,$eventid);
             $stmt->execute();
             echo json_encode(array(
-                "success" => true,
+                "success" => htmlentities((bool)true),
             ));
             $stmt->close();
             }
@@ -122,8 +122,8 @@ else {
             $stmt->bind_param('ii',$sharegroup_id,$shareid);
             if (!$stmt) {
                 echo json_encode(array(
-                    "success" => false,
-                    "message" => "ERROR getting event from database"
+                    "success" => htmlentities((bool)false),
+                    "message" => htmlentities((string)"ERROR getting event from database")
                 ));
                 exit;
             }
@@ -134,7 +134,7 @@ else {
             $stmt->close();
             if($exists_count>0){
                 echo json_encode(array(
-                    "invited" => true,
+                    "invited" => htmlentities((bool)true),
                 ));
                 exit;
             }
@@ -143,15 +143,15 @@ else {
             $stmt=$mysqli->prepare("INSERT into events(user_id, title, date, time, tags, group_id) values(?,?,?,?,?,?)");
             if (!$stmt) {
                 echo json_encode(array(
-                    "success" => false,
-                    "message" => "ERROR inserting into database"
+                    "success" => htmlentities((bool)false),
+                    "message" => htmlentities((string)"ERROR inserting into database")
                 ));
                 exit;
             }
             $stmt->bind_param('issssi',$shareid,$sharetitle,$sharedate,$sharetime,$sharetag,$sharegroup_id);
             $stmt->execute();
             echo json_encode(array(
-                "success" => true,
+                "success" => htmlentities((bool)true),
             ));
             $stmt->close();
             }
