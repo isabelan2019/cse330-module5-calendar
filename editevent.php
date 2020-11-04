@@ -38,8 +38,7 @@ else{
     exit;
     }
     else{
-        //check if it's a group event
-        //check if it's a group event that the user has access to
+        //check if the user has access to the event and retrieve value of the group_id (null or already set)
         $stmt = $mysqli->prepare("SELECT COUNT(*), group_id from events where event_id=? AND user_id=?");
         //bind parameter
         $stmt->bind_param('ii', $event_id,$user_id);

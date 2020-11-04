@@ -98,11 +98,15 @@ $token=$_SESSION['token'];
     </div>
 
     <div id="instructions" class="instructions" title="Instructions">
-        <p> Welcome to your calendar! You may add events to your calendar by scrolling to the bottom. For each event, you have the choice of tagging an event with
-            categories of personal, school, or work. You may click on your events on the calendar to edit or delete them. When you edit them, you will have to reenter
-            all information again. You may also create group events by inviting other registered users to your event after it has been made, and it will appear on recipients' calendars.
-            However, you must invite other users one at a time. Other invitees' may edit and delete group events, which will edit and delete group events for all invitees.  
-            Lastly, you may share your entire calendar with other registered users, but they may not edit or delete these events.  </p>
+        <ul>
+            <li><strong>Add Events: </strong>Scroll to the bottom to add events to your personal calendar.</li>
+            <li><strong>Delete/Edit Events: </strong>Click on a personal invite on your calendar to delete and edit your event.</li>
+            <li><strong>Share Calendar: </strong>You may enter another registered user in order to share all your calendar invites with them.
+            Users receiving your calendar will have your events displayed but will be unable to edit or delete your shared events. </li>
+            <li><strong>Group Events/Invite Others:</strong>You may enter another registered user in order to invite them to your event. Any user
+            is able to share a group event, regardless of who created the event. Group events may be deleted from your personal calendar, but will not be deleted from others. Group events may be
+            edited by any user and this will be reflected on all calendars of invited users. You may not invite a user who has already been invited. </li>
+        </ul>
     </div>
     
     <table id="calendar">
