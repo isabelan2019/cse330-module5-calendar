@@ -24,6 +24,7 @@ $work = (bool)$json_obj['work'];
 $other = (bool)$json_obj['other'];
 
 $eventsArray=array();
+
 //events are added through each tag. goes through personal, then school, then work, then null tags. 
 //shared events are not sorted
 array_push($eventsArray,array(
