@@ -341,9 +341,10 @@ $token=$_SESSION['token'];
         document.getElementById('schooldisplay').addEventListener("change", updateCalendar, false);
         document.getElementById('workdisplay').addEventListener("change", updateCalendar, false);
         document.getElementById('otherdisplay').addEventListener("change", updateCalendar, false);
-        //set global variable
-        let current_event_id=null;
+        document.getElementById('instructions-btn').addEventListener("click",function(){$("#instructions").dialog({width:500})},false);
+        //set global variables
 
+        let current_event_id=null;
         //add event to server
         function addEvent(event) {
             event.preventDefault();
@@ -704,11 +705,20 @@ $token=$_SESSION['token'];
                                 event.setAttribute("name","shared");
                             }
                             else {
+                                if(jsonData[n].group_id!=null){
+                                //show event title and event time
+                                eventText = document.createTextNode("Group event: "+jsonData[n].title + " at " + jsonData[n].time);
+                                //only allow dialog box to show if it is user's own event (not shared calendar)
+                                //document.getElementById(calendar_date).children[1].addEventListener("click", showDialog, false);
+                                document.getElementById(calendar_date).children[1].addEventListener("click", getEventID, false);
+                                }
+                                else{
                                 //show event title and event time
                                 eventText = document.createTextNode(jsonData[n].title + " at " + jsonData[n].time);
                                 //only allow dialog box to show if it is user's own event (not shared calendar)
                                 //document.getElementById(calendar_date).children[1].addEventListener("click", showDialog, false);
                                 document.getElementById(calendar_date).children[1].addEventListener("click", getEventID, false);
+                                }
                             }
                             event.appendChild(eventText);
                             //set id of this div to the eventID
@@ -846,6 +856,9 @@ $token=$_SESSION['token'];
                     if (data.sameuser == true) {
                         alert("you cannot share with yourself");
                     }
+                    if(data.invited==true){
+                        alert("This user has already been invited");
+                    }
                     else {
                         updateCalendar();
                         //console.log(data);
@@ -873,7 +886,7 @@ $token=$_SESSION['token'];
             })
                 .then(response => response.json())
                 .then(data => {
-                    console.log(data);
+                    
                     if (data.exists == false) {
                         alert("This user does not exist. Please choose another");
                     } 
@@ -881,7 +894,6 @@ $token=$_SESSION['token'];
                         alert("you cannot share with yourself");
                     } 
                     else {
-                        console.log(data);
                         updateCalendar();
                         alert(data.success ? "Calendar shared" : `Calendar could not be shared: ${data.message}`);
 

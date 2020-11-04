@@ -55,7 +55,7 @@ else {
             ));
             exit;
         }
-        $stmt->close();
+        
 
         //check if shareuser is the same as current 
         if ($user_id == $shareid){
@@ -65,10 +65,11 @@ else {
             exit;
         }
 
-
-        //get the event that will be shared
-        $stmt=$mysqli->prepare("SELECT title, date, time, tags from events where event_id=?");
-        $stmt->bind_param('i',$eventid);
+        $stmt->close();
+        
+        //get the event that will be shared + check that the user has access to this event
+        $stmt=$mysqli->prepare("SELECT title, date, time, tags,group_id from events where event_id=? AND user_id=?");
+        $stmt->bind_param('ii',$eventid,$user_id);
         if (!$stmt) {
             echo json_encode(array(
                 "success" => false,
@@ -78,46 +79,83 @@ else {
         }
         
         $stmt->execute();
-        $stmt->bind_result($sharetitle,$sharedate,$sharetime, $sharetag);
+        $stmt->bind_result($sharetitle,$sharedate,$sharetime, $sharetag,$sharegroup_id);
         $stmt->fetch();
         $stmt->close();
 
-       // $username=$_SESSION['username'];
-        
-        //change group_id of the event being shared
-        $stmt=$mysqli->prepare("UPDATE events set group_id=? where event_id=?");
-        if (!$stmt) {
-            echo json_encode(array(
-                "success" => false,
-                "message" => "ERROR inserting into database"
-            ));
-            exit;
-        }
-        $stmt->bind_param('ii',$eventid,$eventid);
-        $stmt->execute();
-        // echo json_encode(array(
-        //     "success" => true
-        // ));
-        $stmt->close();
-        
+        if($sharegroup_id==null){
+            //change group_id of the event being shared
+            $stmt=$mysqli->prepare("UPDATE events set group_id=? where event_id=?");
+            if (!$stmt) {
+                echo json_encode(array(
+                    "success" => false,
+                    "message" => "ERROR inserting into database"
+                ));
+                exit;
+            }
+            $stmt->bind_param('ii',$eventid,$eventid);
+            $stmt->execute();
+            // echo json_encode(array(
+            //     "success" => true
+            // ));
+            $stmt->close();
 
-        
-        //add new event where the new user is shareuser
-        $stmt=$mysqli->prepare("INSERT into events(user_id, title, date, time, tags, group_id) values(?,?,?,?,?,?)");
-        if (!$stmt) {
+            //add new event where the new user is shareuser
+            $stmt=$mysqli->prepare("INSERT into events(user_id, title, date, time, tags, group_id) values(?,?,?,?,?,?)");
+            if (!$stmt) {
+                echo json_encode(array(
+                    "success" => false,
+                    "message" => "ERROR inserting into database"
+                ));
+                exit;
+            }
+            $stmt->bind_param('issssi',$shareid,$sharetitle,$sharedate,$sharetime,$sharetag,$eventid);
+            $stmt->execute();
             echo json_encode(array(
-                "success" => false,
-                "message" => "ERROR inserting into database"
+                "success" => true,
             ));
-            exit;
-        }
-        $stmt->bind_param('issssi',$shareid,$sharetitle,$sharedate,$sharetime,$sharetag,$eventid);
-        $stmt->execute();
-        echo json_encode(array(
-            "success" => true,
-        ));
-        $stmt->close();
-
+            $stmt->close();
+            }
+        else{
+            //check if invited user has already been invited
+            $stmt=$mysqli->prepare("SELECT COUNT(*) from events where group_id=? AND user_id=?");
+            $stmt->bind_param('ii',$sharegroup_id,$shareid);
+            if (!$stmt) {
+                echo json_encode(array(
+                    "success" => false,
+                    "message" => "ERROR getting event from database"
+                ));
+                exit;
+            }
+            
+            $stmt->execute();
+            $stmt->bind_result($exists_count);
+            $stmt->fetch();
+            $stmt->close();
+            if($exists_count>0){
+                echo json_encode(array(
+                    "invited" => true,
+                ));
+                exit;
+            }
+            else{
+            //add new event where the new user is shareuser
+            $stmt=$mysqli->prepare("INSERT into events(user_id, title, date, time, tags, group_id) values(?,?,?,?,?,?)");
+            if (!$stmt) {
+                echo json_encode(array(
+                    "success" => false,
+                    "message" => "ERROR inserting into database"
+                ));
+                exit;
+            }
+            $stmt->bind_param('issssi',$shareid,$sharetitle,$sharedate,$sharetime,$sharetag,$sharegroup_id);
+            $stmt->execute();
+            echo json_encode(array(
+                "success" => true,
+            ));
+            $stmt->close();
+            }
+        }        
         
     }
 }
