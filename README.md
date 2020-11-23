@@ -25,6 +25,6 @@ Creative Portion
 
 3. Tag your events, and view your calendar by tags. When logged in, you can create events under specific tags, such as personal, work, and school. Once these events appear on your calendar, you can use the display tags above the calendar to select the events, by tag, that you want to see on your calendar. 
 
-Grade: 60/60
+Grade: 75/75
 
 Standard creative portion. All features seem functional!
