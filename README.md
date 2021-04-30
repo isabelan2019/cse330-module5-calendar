@@ -1,8 +1,10 @@
 # CSE330
-Student IDs
+Contributors:
+Isabel An
+Claire Irawan
 
-456827
-456941
+About:
+Dynamic calendar web app where users can add, delete, edit, and share calendar events
 
 Link: http://ec2-18-188-149-204.us-east-2.compute.amazonaws.com/~isabel.an/module5_group/main.html
 
