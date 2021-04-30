@@ -1,7 +1,7 @@
 # CSE330
 Contributors:
-Isabel An
-Claire Irawan
+- Isabel An
+- Claire Irawan
 
 About:
 Dynamic calendar web app where users can add, delete, edit, and share calendar events
